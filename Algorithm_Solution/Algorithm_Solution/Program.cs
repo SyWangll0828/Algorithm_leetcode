@@ -11,6 +11,7 @@ namespace Algorithm_Solution
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+            Console.WriteLine("团酱是个大笨蛋!");
             Console.ReadLine();
         }
     }
