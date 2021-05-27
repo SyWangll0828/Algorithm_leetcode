@@ -15,4 +15,12 @@ namespace Common
             Console.ReadLine();
         }
     }
+
+    class Case
+    {
+        public int MyProperty { get; set; }
+        public int[] nums = { 1, 2, 3 };
+        string[] vs = { };
+        string[] ab = { "5", "2", "C", "D", "+" };
+    }
 }
