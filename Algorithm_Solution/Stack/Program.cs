@@ -10,17 +10,19 @@ namespace Stack
     {
         static void Main(string[] args)
         {
-            StackProblems problems = new StackProblems();
-            //实例化可以访问类成员
+            Problems problems = new Problems();
+            //实例化可以访问类成员;直接访问需要添加static
             Common.Case testCase = new Common.Case();
-            problems.IntToRoman(testCase.MyProperty2);
-            //直接访问需要添加static
-            problems.IntToRoman(Common.Case.MyProperty);
+            //problems.IntToRoman(testCase.MyProperty2);
+            //problems.IntToRoman(Common.Case.MyProperty);
+            //Console.WriteLine(problems.MakeGood(testCase.s));
+
+            problems.BuildArray(testCase.traget, testCase.n);
             Console.ReadKey();
         }
     }
 
-    class StackProblems
+    class Problems
     {
         readonly Tuple<string, int>[] tuples = {
         //从大到小，便于显示
@@ -55,7 +57,51 @@ namespace Stack
             return builder.ToString();
         }
 
-        //单调栈专门解决Next Greater Number，
+        //1441. 用栈操作构建数组
+        public IList<string> BuildArray(int[] target, int n)
+        {
+            List<string> list = new List<string>();
+            for (int i = 1, index = 0; i <= n && index < target.Length; i++)
+            {
+                if (target[index] == i)
+                {
+                    list.Add("Push");
+                    index++;
+                }
+                else
+                {
+                    //目标数组值已经经过了一次入栈出栈
+                    list.Add("Push");
+                    list.Add("Pop");
+                }
+            }
+            return list;
+        }
+
+        //1544. 整理字符串
+        public string MakeGood(string s)
+        {
+            Stack<char> stack = new Stack<char>();
+            for (int i = 0; i < s.Length; i++)
+            {
+                //栈里有无相应的大小写字母;有的话将其出栈。
+                if (stack.Count != 0 && (char.ToUpper(stack.Peek()) == s[i] || char.ToLower(stack.Peek()) == s[i]) && stack.Peek() != s[i])
+                    stack.Pop();
+                else
+                    //将元素添加到栈
+                    stack.Push(s[i]);
+            }
+            //栈后进先出 在赋值一个新栈
+            Stack<char> reverseStack = new Stack<char>();
+            while (stack.Count > 0)
+            {
+                reverseStack.Push(stack.Pop());
+            }
+            return string.Join("", reverseStack.ToArray());
+        }
+
+        //单调栈专门解决Next Greater Number
+        //739. 每日温度
         public int[] DailyTemperatures(int[] temperatures)
         {
             int[] res = new int[temperatures.Length];
@@ -74,6 +120,7 @@ namespace Stack
             return res;
         }
 
+        //84. 柱状图中最大的矩形
         public int LargestRectangleArea(int[] heights)
         {
             if (heights == null || heights.Length <= 0) return 0;
