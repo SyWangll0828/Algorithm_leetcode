@@ -16,5 +16,9 @@ namespace Common
         public int n = 3;
         public int[] traget = { 2, 3, 4 };
 
+        public int[] nums1 = { 1, 2, 1 };
+        public int[] nums2 = { 1, 2, 3, 4 };
+        public string[] tokens = { "4", "13", "5", "/", "+" };
+
     }
 }

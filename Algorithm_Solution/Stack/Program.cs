@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,15 +16,18 @@ namespace Stack
             Common.Case testCase = new Common.Case();
             //problems.IntToRoman(testCase.MyProperty2);
             //problems.IntToRoman(Common.Case.MyProperty);
-            //Console.WriteLine(problems.MakeGood(testCase.s));
-
-            problems.BuildArray(testCase.traget, testCase.n);
+            //problems.MakeGood(testCase.s);
+            //problems.NextGreaterElement(testCase.nums1, testCase.nums2);
+            problems.NextGreaterElements(testCase.nums1);
+            //problems.BuildArray(testCase.traget, testCase.n);
+            //problems.EvalRPN(testCase.tokens);
             Console.ReadKey();
         }
     }
 
     class Problems
     {
+        //栈的特性：后入先出
         readonly Tuple<string, int>[] tuples = {
         //从大到小，便于显示
         new Tuple<string, int>("M",1000),
@@ -100,7 +104,128 @@ namespace Stack
             return string.Join("", reverseStack.ToArray());
         }
 
-        //单调栈专门解决Next Greater Number
+        //150.  逆波兰表达式求值
+        public int EvalRPN(string[] tokens)
+        {
+            Stack<int> s = new Stack<int>();
+            int temp;
+            foreach (var c in tokens)
+            {
+                if (int.TryParse(c, out temp))
+                    s.Push(temp);
+                else
+                {
+                    //将前两个数字出栈
+                    int nums1 = s.Pop();
+                    int nums2 = s.Pop();
+                    switch (c)
+                    {
+                        case "+":
+                            s.Push(nums2 + nums1);
+                            break;
+                        case "-":
+                            s.Push(nums2 - nums1);
+                            break;
+                        case "*":
+                            s.Push(nums2 * nums1);
+                            break;
+                        //整数除法只保留整数部分
+                        case "/":
+                            s.Push(nums2 / nums1);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            return s.Pop();
+
+        }
+
+        #region 特殊的数据结构--单调栈
+        //单调栈专门解决Next Greater Number(模板一)
+        public int[] NextGreaterNumberOne(int[] nums)
+        {
+            int[] ans = new int[nums.Length]; // 存放答案的数组
+            Stack<int> s = new Stack<int>();
+            for (int i = nums.Length - 1; i >= 0; i--)
+            { // 倒着往栈⾥放
+                while (s.Any() && s.Peek() <= nums[i])
+                { // 判定个⼦⾼矮
+                    s.Pop(); // 小的出栈
+                }
+                ans[i] = s.Any() ? -1 : s.Peek(); // 这个元素⾝后的第⼀个⾼个
+                s.Push(nums[i]); // 进队，接受之后的⾝⾼判定吧！
+            }
+            return ans;
+        }
+
+        //单调栈专门解决Next Greater Number(模板二-循环数组)
+        public int[] NextGreaterNumberTwo(int[] nums)
+        {
+            /*计算机的内存都是线性的，没有真正意义上的环形数组，但是我们可以模拟出环形数组的效果，一般是通过 % 运算符求模（余数），获得环形特效：
+            int[] arr = { 1, 2, 3, 4, 5 };
+            int n = arr.length, index = 0;
+            while (true) 
+            {
+                print(arr[index % n]);
+                index++;
+            }*/
+            int n = nums.Length;
+            int[] ans = new int[n]; // 存放答案的数组
+            Stack<int> s = new Stack<int>();
+            // 假装这个数组长度翻倍了
+            for (int i = 2 * n - 1; i >= 0; i--)
+            {
+                while (s.Any() && s.Peek() <= nums[i % n])
+                    s.Pop();
+                ans[i % n] = s.Any() ? -1 : s.Peek();
+                s.Push(nums[i % n]);
+            }
+            return ans;
+        }
+
+        //496. 下一个更大元素 I
+        public int[] NextGreaterElement(int[] nums1, int[] nums2)
+        {
+            int[] ans = new int[nums1.Length];// 存放答案的数组
+            Dictionary<int, int> keyValues = new Dictionary<int, int>();
+            Stack<int> s = new Stack<int>();
+            for (int i = nums2.Length - 1; i >= 0; i--)
+            {// 倒着往栈⾥放
+                while (s.Any() && s.Peek() <= nums2[i])
+                {// 判定数字大小
+                    s.Pop();
+                }
+                //先用字典存放nums2中个数字下一个更大的元素
+                keyValues.Add(nums2[i], !s.Any() ? -1 : s.Peek());
+                s.Push(nums2[i]);
+            }
+            //将nums1与对应字典key的value赋值给ans
+            for (int i = 0; i < nums1.Length; i++)
+            {
+                ans[i] = keyValues[nums1[i]];
+            }
+            return ans;
+        }
+
+        //503. 下一个更大元素 II ( 循环数组 )
+        public int[] NextGreaterElements(int[] nums)
+        {
+            int n = nums.Length;
+            int[] ans = new int[n]; // 存放答案的数组
+            Stack<int> s = new Stack<int>();
+            // 假装这个数组长度翻倍了
+            for (int i = 2 * n - 1; i >= 0; i--)
+            {
+                while (s.Any() && s.Peek() <= nums[i % n])
+                    s.Pop();
+                ans[i % n] = !s.Any() ? -1 : s.Peek();
+                s.Push(nums[i % n]);
+            }
+            return ans;
+        }
+
         //739. 每日温度
         public int[] DailyTemperatures(int[] temperatures)
         {
@@ -139,6 +264,7 @@ namespace Stack
 
             return max;
         }
+        #endregion
 
         public static IList<string> TopKFrequent(string[] words, int k)
         {
@@ -160,6 +286,36 @@ namespace Stack
                 return keyValues[b] - keyValues[a];
             });
             return res.GetRange(0, k);
+        }
+    }
+    
+    //155. 最小栈
+    class MinStack
+    {
+        /** initialize your data structure here. */
+        public MinStack()
+        {
+
+        }
+
+        public void Push(int val)
+        {
+
+        }
+
+        public void Pop()
+        {
+
+        }
+
+        public int Top()
+        {
+            return 1;
+        }
+
+        public int GetMin()
+        {
+            return 1;
         }
     }
 }
