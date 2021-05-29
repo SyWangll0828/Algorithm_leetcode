@@ -41,6 +41,7 @@ namespace Stack
         new Tuple<string, int>("IV",4),
         new Tuple<string, int>("I",1),
         };
+
         public string IntToRoman(int num)
         {
             StringBuilder builder = new StringBuilder();
@@ -288,34 +289,139 @@ namespace Stack
             return res.GetRange(0, k);
         }
     }
-    
+
     //155. 最小栈
     class MinStack
     {
+        Stack<int> minStack;
+        Stack<int> stack;
         /** initialize your data structure here. */
         public MinStack()
         {
-
+            minStack = new Stack<int>();
+            stack = new Stack<int>();
+            minStack.Push(int.MaxValue);
         }
 
         public void Push(int val)
         {
-
+            minStack.Push(Math.Min(minStack.Peek(), val));
+            stack.Push(val);
         }
 
         public void Pop()
         {
-
+            stack.Pop();
+            minStack.Pop();
         }
 
         public int Top()
         {
-            return 1;
+            return stack.Peek();
         }
 
         public int GetMin()
         {
-            return 1;
+            return minStack.Peek();
+        }
+    }
+
+    //232. 用栈实现队列
+    public class MyQueue
+    {
+        //后入先出的输出栈模拟先入先出的队列
+        Stack<int> inStack;
+        Stack<int> outStack;
+        /** Initialize your data structure here. */
+        public MyQueue()
+        {
+            inStack = new Stack<int>();
+            outStack = new Stack<int>();
+        }
+
+        /** Push element x to the back of queue. */
+        public void Push(int x)
+        {
+            inStack.Push(x);
+        }
+
+        /** Removes the element from in front of queue and returns that element. */
+        public int Pop()
+        {
+            //输出栈没有元素，则将输入栈倒插到输出栈
+            if (!outStack.Any())
+            {
+                inOutStack(inStack);
+            }
+            return outStack.Pop();
+        }
+
+        /** Get the front element. */
+        public int Peek()
+        {
+            if (!outStack.Any())
+            {
+                inOutStack(inStack);
+            }
+            return outStack.Peek();
+        }
+
+        /** Returns whether the queue is empty. */
+        public bool Empty()
+        {
+            return inStack.Count == 0 && outStack.Count == 0;
+        }
+
+        public void inOutStack(Stack<int> stack)
+        {
+            while (stack.Any())
+            {
+                outStack.Push(inStack.Pop());
+            }
+        }
+    }
+
+    //225. 用队列实现栈
+    public class MyStack
+    {
+        Queue<int> queue;
+        Queue<int> tepmpQueue;
+        /** Initialize your data structure here. */
+        public MyStack()
+        {
+            queue = new Queue<int>();
+            tepmpQueue = new Queue<int>();
+        }
+
+        /** Push element x onto stack. */
+        public void Push(int x)
+        {
+            queue.Enqueue(x);
+            while (tepmpQueue.Count > 0)
+            {
+                queue.Enqueue(tepmpQueue.Dequeue());
+            }
+            Queue<int> temp = queue;
+            queue = tepmpQueue;
+            tepmpQueue = temp;
+        }
+
+        /** Removes the element on top of the stack and returns that element. */
+        public int Pop()
+        {
+            return tepmpQueue.Dequeue();
+        }
+
+        /** Get the top element. */
+        public int Top()
+        {
+            return tepmpQueue.Peek();
+        }
+
+        /** Returns whether the stack is empty. */
+        public bool Empty()
+        {
+            return tepmpQueue.Count == 0;
         }
     }
 }
