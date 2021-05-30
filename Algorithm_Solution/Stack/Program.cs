@@ -16,7 +16,7 @@ namespace Stack
             Common.Case testCase = new Common.Case();
             //problems.IntToRoman(testCase.MyProperty2);
             //problems.IntToRoman(Common.Case.MyProperty);
-            //problems.MakeGood(testCase.s);
+            problems.DecodeString(testCase.s);
             //problems.NextGreaterElement(testCase.nums1, testCase.nums2);
             problems.NextGreaterElements(testCase.nums1);
             //problems.BuildArray(testCase.traget, testCase.n);
@@ -287,6 +287,47 @@ namespace Stack
                 return keyValues[b] - keyValues[a];
             });
             return res.GetRange(0, k);
+        }
+
+        //394.  字符串解码
+        public string DecodeString(string s)
+        {
+            Stack<string> letter = new Stack<string>();
+            Stack<int> nums = new Stack<int>();
+            StringBuilder builder = new StringBuilder();
+            int num = 0;
+            foreach (var c in s)
+            {
+                //处理连续数字的情况
+                if (char.IsDigit(c))
+                {
+                    num = num * 10 + int.Parse(c.ToString());
+                }
+                //遇到‘[’，将当前倍数以及组成的字符串入栈并置空
+                else if (c == '[')
+                {
+                    letter.Push(builder.ToString());
+                    builder = new StringBuilder();
+                    nums.Push(num);
+                    num = 0;
+                }
+                //栈顶出栈并
+                else if (c == ']')
+                {
+                    int count = nums.Pop();
+                    StringBuilder temp = new StringBuilder();
+                    for (int i = 0; i < count; i++)
+                    {
+                        temp.Append(builder);
+                    }
+                    builder = new StringBuilder(letter.Pop() + temp);
+                }
+                else
+                {
+                    builder.Append(c);
+                }
+            }
+            return builder.ToString();
         }
     }
 

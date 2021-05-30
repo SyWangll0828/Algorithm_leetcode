@@ -11,7 +11,7 @@ namespace Common
         public static int MyProperty { get; set; }
         public int MyProperty2 { get; set; }
 
-        public string s = "leEeetcode";
+        public string s = "3[a]2[bc]";
         public int[] index = { 4, 5, 6, 7, 0, 2, 1, 3 };
         public int n = 3;
         public int[] traget = { 2, 3, 4 };
@@ -19,6 +19,8 @@ namespace Common
         public int[] nums1 = { 1, 2, 1 };
         public int[] nums2 = { 1, 2, 3, 4 };
         public string[] tokens = { "4", "13", "5", "/", "+" };
+
+
 
     }
 }
