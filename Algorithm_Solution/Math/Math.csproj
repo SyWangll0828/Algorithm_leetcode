@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5F4E6418-5A4F-48A4-9D86-05177926B3EF}</ProjectGuid>
+    <ProjectGuid>{CA8C92AC-CCD3-4678-B87E-081F57E21E88}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Tree</RootNamespace>
-    <AssemblyName>Tree</AssemblyName>
+    <RootNamespace>Math</RootNamespace>
+    <AssemblyName>Math</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
