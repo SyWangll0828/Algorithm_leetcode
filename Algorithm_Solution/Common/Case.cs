@@ -15,7 +15,7 @@ namespace Common
         public int[] index = { 4, 5, 6, 7, 0, 2, 1, 3 };
         public int n = 3;
         public int[] traget = { 2, 3, 4 };
-        public int[] nums = { 23, 2, 6, 4, 7 };
+        public int[] nums = { 1, 0, 1, 1 };
         public int[] nums1 = { 1, 2, 1 };
         public int[] nums2 = { 1, 2, 3, 4 };
         public string[] tokens = { "4", "13", "5", "/", "+" };

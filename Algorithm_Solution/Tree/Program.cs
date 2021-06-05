@@ -37,11 +37,42 @@ namespace Tree
 
         #endregion
 
+        //BST 二叉搜索树 
+        //中序遍历结果是按升序排列的
+        //653. 两数之和 IV - 输入 BST
+        public bool FindTarget(TreeNode root, int k)
+        {
+            //中序遍历
+            var list = new List<int>();
+            traversal(root, list);
+            int low = 0, high = list.Count - 1;
+            while (low < high)
+            {
+                int sum = list[low] + list[high];
+                if (k == sum)
+                    return true;
+                else if (sum > k)
+                    high--;
+                else
+                    low++;
+            }
+            return false;
+            //局部函数
+            void traversal(TreeNode node, List<int> resList)
+            {
+                if (node == null)
+                    return;
+                traversal(node.left, resList);
+                resList.Add(node.val);
+                traversal(node.right, resList);
+            }
+        }
+
+
     }
 
     class TreeNode
     {
-        public int MyProperty;
         public int val;
         public TreeNode left;
         public TreeNode right;
