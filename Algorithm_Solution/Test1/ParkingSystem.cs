@@ -13,6 +13,7 @@ namespace Test1
         public ParkingSystem(int big, int medium, int small)
         {
             sum = new int[3] { big, medium, small };
+            string s = "";
         }
 
         public bool AddCar(int carType)
