@@ -11,27 +11,25 @@ namespace Array
         static void Main(string[] args)
         {
             Problems problems = new Problems();
+            Knowledge knowledge = new Knowledge();
             //实例化可以访问类成员;直接访问需要添加static
             Common.Case testCase = new Common.Case();
+            //int[] testNums = knowledge.Reverse(testCase.nums);
+            //Console.WriteLine(string.Join("", testNums.ToArray()));
             //problems.IntToRoman(testCase.MyProperty2);
+            Knowledge.Rank(3, testCase.index);
             //var rcptnos = new List<string>();
             //problems.Test(rcptnos);
-            var n = problems.TwoSum2(new int[] { 2, 2, 7, 11, 15 }, 100);
+            //var n = problems.TwoSum2(new int[] { 2, 2, 7, 11, 15 }, 100);
+            //problems.LengthOfLongestSubstring("pwwkew");
             //problems.ContainsNearbyDuplicate(testCase.nums, 1);
+            double a = 1.0 / 0.0;
             Console.ReadKey();
         }
     }
 
     class Problems
     {
-        public void Test(List<string> str)
-        {
-            foreach (var s in str)
-            {
-                Console.WriteLine(s);
-            }
-        }
-
         //414. 第三大的数
         public int ThirdMax(int[] nums)
         {
@@ -114,9 +112,111 @@ namespace Array
             }
             return null;
         }
+        //4. 寻找两个正序数组的中位数
+        //public double FindMedianSortedArrays(int[] nums1, int[] nums2)
+        //{
+
+        //}
         #endregion
 
+        #region 滑动窗口
+        //滑动窗口:
+        //看作是在数组中拖入一个窗口(队列)，并进行窗口的移动(加减)
+        //3. 无重复字符的最长子串
+        public int LengthOfLongestSubstring(String s)
+        {
+            //if (s.Length == 0) return 0;
+            //Dictionary<char, int> dict = new Dictionary<char, int>();
+            //int max = 0;
+            //int left = 0;
+            //for (int i = 0; i < s.Length; i++)
+            //{
+            //    if (dict.ContainsKey(s[i]))
+            //    {
+            //        left = Math.Max(left, dict[s[i]] + 1);
+            //    }
+            //    dict[s[i]] = i;
+            //    max = Math.Max(max, i - left + 1);
+            //}
+            //return max;
+            if (s.Length == 0) return 0;
+            int max = 0;
+            Queue<char> queue = new Queue<char>();
+            for (int i = 0; i < s.Length; i++)
+            {
+                while (queue.Contains(s[i]))
+                    queue.Dequeue();
+                queue.Enqueue(s[i]);
+                if (queue.Count > max) max = queue.Count;
+            }
+            return max;
+        }
 
+        #endregion
+
+        #region 动态规划
+        //53. 最大子序和
+        public int MaxSubArray(int[] nums)
+        {
+            int pre = 0;
+            int sum = nums[0];
+            foreach (var num in nums)
+            {
+                pre = Math.Max(pre + num, num);
+                sum = Math.Max(sum, pre);
+            }
+            return sum;
+        }
+        #endregion
+    }
+
+    class Knowledge
+    {
+        //翻转数组
+        public int[] Reverse(int[] nums)
+        {
+            int n = nums.Length;
+            for (int i = 0; i < n / 2; i++)
+            {
+                int temp = nums[i];
+                nums[i] = nums[n - 1 - i];
+                nums[n - 1 - i] = temp;
+            }
+            return nums;
+        }
+
+        //二分查找的递归实现
+        public static int Rank(int key, int[] nums)
+        {
+            return Rank(key, nums, 0, nums.Length - 1);
+        }
+
+        public static int Rank(int key, int[] nums, int left, int right)
+        {
+            //二分模板(适用于有序数组)
+            if (left > right) return -1;
+            //取中位数
+            int mid = left + (right - left) / 2;
+            if (key >= nums[mid]) return Rank(key, nums, mid + 1, right);
+            else if (key <= nums[mid]) return Rank(key, nums, left, mid - 1);
+            else return key;
+        }
+
+        //判断字符串是否是回文
+        public static bool isPlindRome(string s)
+        {
+            int n = s.Length;
+            for (int i = 0; i < n / 2; i++)
+            {
+                if (s[i] != s[n - i - 1])
+                    return false;
+            }
+            foreach (var c in s)
+            {
+
+            }
+            return true;
+        }
 
     }
 }

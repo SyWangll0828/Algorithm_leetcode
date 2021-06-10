@@ -19,7 +19,10 @@ namespace Common
         public int[] nums1 = { 1, 2, 1 };
         public int[] nums2 = { 1, 2, 3, 4 };
         public string[] tokens = { "4", "13", "5", "/", "+" };
+        public string[] tsetStr = { "4", "13", "5", "0", "8" };
+        public char[] tsetChar = { '4', '3', '5', '0', '8'};
 
+        private int prop;
 
 
     }

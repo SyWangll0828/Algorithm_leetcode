@@ -12,18 +12,39 @@ namespace BitManipulation
         {
             Common.Case testCase = new Common.Case();
             Problems problems = new Problems();
+            Knowledge k = new Knowledge();
+            //静态方法直接访问
+            //bool isPrime= Knowledge.isPrime(4);
             problems.AddBinary("11", "1");
         }
     }
 
     class Problems
     {
+        //技巧
+        //n & (n - 1) 的技巧可以消除二进制中最后一个 1
+
         //231. 2 的幂
         public bool IsPowerOfTwo(int n)
         {
             //如果 n 是正整数并且 n & (n - 1) = 0 或者 n & (-n) = n，那么 n 就是 2 的幂。
             //4的幂-- n % 3 == 1
             return n > 1 && (n & (n - 1)) == 0;
+        }
+
+        //位运算 
+        public static int[] PlusOne(int[] digits)
+        {
+            for (int i = digits.Length - 1; i >= 0; i--)
+            {
+                digits[i]++;
+                digits[i] %= 10;
+                if (digits[i] != 0)
+                    return digits;
+            }
+            digits = new int[digits.Length + 1];
+            digits[0] = 1;
+            return digits;
         }
 
         //lowbit运算
@@ -72,17 +93,6 @@ namespace BitManipulation
 
         }
 
-        public int[] FindErrorNums(int[] nums)
-        {
-            int sum = 0, temp = 0;
-            for (int i = 0; i < nums.Length; i++)
-            {
-                sum += i;
-                temp += nums[i];
-            }
-            return new int[2];
-        }
-
         //461. 汉明距离
         //计算 x 和 y 之间的汉明距离，可以先计算 x异或y，然后统计结果中等于1的位数。
         public int HammingDistance(int x, int y)
@@ -99,5 +109,51 @@ namespace BitManipulation
             }
             return res;
         }
+
+        //191. 位1的个数
+        public int HammingWeight(int n)
+        {
+            int res = 0;
+            //for (int i = 0; i < 32; i++)
+            //{
+            //    res += ((n >> i) & 1);
+            //}
+            //return res;
+
+            //消除二进制末尾的1
+            while (n != 0)
+            {
+                n = n & (n - 1);
+                res++;
+            }
+            return res;
+        }
+
+        //338. 比特位计数
+        public int[] CountBits(int n)
+        {
+            int[] res = new int[n + 1];
+            for (int i = 1; i <= n; i++)
+            {
+                //(i & 1)== 0 --偶数
+                res[i] = res[i >> 1] + (i & 1);
+            }
+            return res;
+        }
+    }
+
+    class Knowledge
+    {
+        //判断一个数是否是素数(质数)
+        public static bool isPrime(int n)
+        {
+            if (n < 2) return false;
+            for (int i = 2; i * i <= n; i++)
+            {
+                if (n % i == 0) return false;
+            }
+            return true;
+        }
+
     }
 }

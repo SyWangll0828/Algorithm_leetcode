@@ -19,6 +19,7 @@ namespace Stack
             problems.DecodeString(testCase.s);
             //problems.NextGreaterElement(testCase.nums1, testCase.nums2);
             problems.NextGreaterElements(testCase.nums1);
+            string ds = problems.Test();
             //problems.BuildArray(testCase.traget, testCase.n);
             //problems.EvalRPN(testCase.tokens);
             Console.ReadKey();
@@ -60,6 +61,22 @@ namespace Stack
                     break;
             }
             return builder.ToString();
+        }
+
+        //1047. 删除字符串中的所有相邻重复项
+        public string RemoveDuplicates(string s)
+        {
+            //StringBuilder可以充当栈
+            StringBuilder sb = new StringBuilder();
+            foreach (var c in s)
+            {
+                int len = sb.Length;
+                if (len > 0 && c == sb[len - 1])
+                    sb.Remove(len - 1, 1);
+                else
+                    sb.Append(c);
+            }
+            return sb.ToString();
         }
 
         //1441. 用栈操作构建数组
@@ -329,6 +346,35 @@ namespace Stack
             }
             return builder.ToString();
         }
+
+        public string Test()
+        {
+            List<Pzhy> pzhies = new List<Pzhy>()
+            {
+                new Pzhy { phcode = "h-1", remake = "123" },
+                new Pzhy { phcode = "h-2", remake = "345" },
+                new Pzhy { phcode = "h-1", remake = "678" },
+            };
+            var group1 = pzhies.GroupBy(p => p.phcode).Select(o=>
+                new Pzhy()
+                {
+                    phcode = o.Key,
+                    remake = string.Join("", o.Select(t => t.remake).ToArray())
+                }
+            ).ToList();
+            //下面是上面代码的内部解释
+            List<Pzhy> Result = new List<Pzhy>();
+            foreach (IGrouping<string, Pzhy> groupSequence in group1)
+            {
+                Pzhy m = new Pzhy()
+                {
+                    phcode = groupSequence.First().phcode,
+                    remake = string.Join("", groupSequence.Select(t => t.remake).ToArray())
+                };
+                Result.Add(m);
+            }
+            return Result.ToArray().ToString();
+        }
     }
 
     //155. 最小栈
@@ -464,5 +510,11 @@ namespace Stack
         {
             return tepmpQueue.Count == 0;
         }
+    }
+
+    class Pzhy
+    {
+        public string phcode { get; set; }
+        public string remake { get; set; }
     }
 }
