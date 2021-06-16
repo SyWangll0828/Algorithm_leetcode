@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Stack
 {
@@ -16,10 +17,10 @@ namespace Stack
             Common.Case testCase = new Common.Case();
             //problems.IntToRoman(testCase.MyProperty2);
             //problems.IntToRoman(Common.Case.MyProperty);
-            problems.DecodeString(testCase.s);
+            //problems.DecodeString(testCase.s);
             //problems.NextGreaterElement(testCase.nums1, testCase.nums2);
-            problems.NextGreaterElements(testCase.nums1);
-            string ds = problems.Test();
+            //problems.NextGreaterElements(testCase.nums1);
+            problems.Test2();
             //problems.BuildArray(testCase.traget, testCase.n);
             //problems.EvalRPN(testCase.tokens);
             Console.ReadKey();
@@ -347,7 +348,7 @@ namespace Stack
             return builder.ToString();
         }
 
-        public string Test()
+        public string Test1()
         {
             List<Pzhy> pzhies = new List<Pzhy>()
             {
@@ -355,7 +356,7 @@ namespace Stack
                 new Pzhy { phcode = "h-2", remake = "345" },
                 new Pzhy { phcode = "h-1", remake = "678" },
             };
-            var group1 = pzhies.GroupBy(p => p.phcode).Select(o=>
+            var group1 = pzhies.GroupBy(p => p.phcode).Select(o =>
                 new Pzhy()
                 {
                     phcode = o.Key,
@@ -374,6 +375,34 @@ namespace Stack
                 Result.Add(m);
             }
             return Result.ToArray().ToString();
+        }
+        public void Test2()
+        {
+            List<Pzhy> pzhies = new List<Pzhy>()
+            {
+                new Pzhy { phcode = "h-1", remake = "123",c=1,d=DateTime.Now },
+                new Pzhy { phcode = "h-2", remake = "345",c=2,d=DateTime.Now },
+            };
+            Pzhy p = new Pzhy();
+            PropertyInfo[] myPropertyInfo;
+            var t = p.GetType();
+            // Get the properties of 'Type' class object.
+            myPropertyInfo = t.GetProperties();
+            foreach (var property in myPropertyInfo)
+            {
+                Console.WriteLine(property.Name);
+                Console.WriteLine(property.PropertyType.Name);
+            }
+            var newType = p.GetType();
+            foreach (var m in pzhies)
+            {
+                foreach (var item in newType.GetRuntimeProperties())
+                {
+                    var type = item.PropertyType.Name;
+                    Console.WriteLine($"属性名称：{item.Name}，类型：{type}，值：{item.GetValue(m)}");
+                }
+            }
+            
         }
     }
 
@@ -516,5 +545,7 @@ namespace Stack
     {
         public string phcode { get; set; }
         public string remake { get; set; }
+        public int c { get; set; }
+        public DateTime d { get; set; }
     }
 }

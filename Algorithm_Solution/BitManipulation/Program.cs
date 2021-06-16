@@ -15,20 +15,31 @@ namespace BitManipulation
             Knowledge k = new Knowledge();
             //静态方法直接访问
             //bool isPrime= Knowledge.isPrime(4);
-            problems.AddBinary("11", "1");
+            problems.HammingWeight(9);
+            //problems.AddBinary("11", "1");
         }
     }
 
     class Problems
     {
         //技巧
-        //n & (n - 1) 的技巧可以消除二进制中最后一个 1
+        //(x & 1) == 1 ---等价---> (x % 2 == 1) 二进制最右一位为1
+        //(x & 1) == 0 ---等价---> (x % 2 == 0)
+        //n >>= 1 ： 将二进制数字 nn 无符号右移一位（ Java 中无符号右移为 ">>>>>>" ）
+        //x / 2 ---等价---> x >> 1
+        //x & (x - 1) ------> 把x最低位的二进制1给去掉
+        //x & -x -----> 得到最低位的1
+        //x & ~x -----> 0
+        //x ^ 0 = x, x ^ x = 0    a ^ b = c, a ^ c = b, b ^ c = a
+        //大写变小写、小写变大写：字符 ^= 32
+        //大写变小写、小写变小写：字符 |= 32
+        //大写变大写、小写变大写：字符 &= -33 
+        //如果 n 是正整数并且 n & (n - 1) = 0 或者 n & (-n) = n，那么 n 就是 2 的幂。
+        //4的幂-- n % 3 == 1
 
         //231. 2 的幂
         public bool IsPowerOfTwo(int n)
         {
-            //如果 n 是正整数并且 n & (n - 1) = 0 或者 n & (-n) = n，那么 n 就是 2 的幂。
-            //4的幂-- n % 3 == 1
             return n > 1 && (n & (n - 1)) == 0;
         }
 
@@ -77,8 +88,6 @@ namespace BitManipulation
             res = carry > 0 ? '1' + res : res;
             return res;
         }
-        //https://leetcode-cn.com/problems/power-of-two/solution/5chong-jie-fa-ni-ying-gai-bei-xia-de-wei-6x9m/
-
         //
         public string ToLowerCase(string s)
         {
@@ -114,6 +123,8 @@ namespace BitManipulation
         public int HammingWeight(int n)
         {
             int res = 0;
+            int n1 = n;
+
             //for (int i = 0; i < 32; i++)
             //{
             //    res += ((n >> i) & 1);

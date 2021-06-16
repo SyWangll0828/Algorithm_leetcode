@@ -31,6 +31,31 @@ namespace Tree
                 return targetSum == root.val;
             return HasPathSum(root.left, targetSum - root.val) || HasPathSum(root.right, targetSum - root.val);
         }
+        //617. 合并二叉树
+        public TreeNode MergeTrees(TreeNode root1, TreeNode root2)
+        {
+            if (root1 == null && root2 == null)
+                return null;
+            if (root1 == null || root2 == null)
+                return root1 == null ? root2 : root1;
+            TreeNode node = new TreeNode(root1.val + root2.val);
+            node.left = MergeTrees(root1.left, root2.left);
+            node.right = MergeTrees(root1.right, root2.right);
+            return node;
+        }
+        //
+        public TreeNode InvertTree(TreeNode root)
+        {
+            //自底向上 后序遍历？先递归 在求解
+            //自顶向下 前序遍历？先求解 在递归
+            if (root == null) return null;
+            TreeNode left = InvertTree(root.left);
+            TreeNode right = InvertTree(root.right);
+            root.left = right;
+            root.right = left;
+            return root;
+
+        }
         #endregion
 
         #region 广度优先搜索
