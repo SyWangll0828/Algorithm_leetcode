@@ -18,9 +18,9 @@ namespace Array
             //Console.WriteLine(string.Join("", testNums.ToArray()));
             //problems.IntToRoman(testCase.MyProperty2);
             Knowledge.Rank(3, testCase.index);
-            int[] test = new int[] { 3, 1 };
+            int[] test = new int[] { 15, 16, 19, 20, 25, 1, 3, 4, 5, 7, 10, 14 };
             //var rcptnos = new List<string>();
-            problems.Search(test, 1);
+            problems.Search3(test, 5);
             //var n = problems.TwoSum2(new int[] { 2, 2, 7, 11, 15 }, 100);
             //problems.LengthOfLongestSubstring("pwwkew");
             //problems.ContainsNearbyDuplicate(testCase.nums, 1);
@@ -77,13 +77,17 @@ namespace Array
         }
 
         #region 二分查找
-        //模板
+        //模板--在取左边区间还是右边区间时需要分析问题中可以通过收缩*边界，锁定最值的范围
         //left<right
-        //左边区间：将数组分割为[left,mid-1]和[mid,right]
-        //需要上取整- mid=left+(right-left+1)/2; 
-        //left=mid;right=mid-1;
-        //右边区间：将数组分割为[left,mid]和[mid+1,right]
-        //left=mid+1;right=mid;
+        //mid在右边区间：将数组分割为[left,mid-1]和[mid,right]
+        //需要上取整- mid=left+(right-left+1)/2; 最后一个出现的元素
+        //往左查 right=mid-1; 往右查 left=mid;
+        //mid在左边区间：将数组分割为[left,mid]和[mid+1,right]
+        //下取整- mid更靠近left  在循环中left <= mid，mid < right; 第一个出现的元素
+        //往左查 right=mid; 往右查 left=mid+1;
+        //注意事项：边界情况;
+        //单调递增线性区间：arr[mid]>=traget 取上限 第一个出现的元素
+        //                  arr[mid]<=traget 取下限 最后一个出现的元素
 
         //167. 两数之和 II - 输入有序数组
         public int[] TwoSum2(int[] numbers, int target)
@@ -219,32 +223,81 @@ namespace Array
             }
             return ans;
         }
-        //33. 搜索旋转排序数组
-        public int Search(int[] nums, int target)
+        //81. 搜索旋转排序数组II
+        public bool Search(int[] nums, int target)
         {
-            int len = nums.Length;
-            if (len == 0) return -1;
-            int left = 0, right = len - 1;
+            if (nums.Length == 1 && nums[0] == target) return true;
+            int left = 0, right = nums.Length - 1;
             while (left < right)
             {
                 int mid = left + (right - left + 1) / 2;
-                if (nums[mid] == target) return mid;
+                if (nums[mid] == target) return true;
+                //数组有重复项，缩小边界（影响时间复杂度为O(n)）
+                if (nums[left] == nums[mid])
+                {
+                    left++;
+                    continue;
+                }
+                //[left,mid-1]有序
                 if (nums[mid] > nums[left])
                 {
-                    if (target >= nums[left] && target <= nums[mid - 1])//将数组分割为[left,mid-1]和[mid,right]
+                    if (nums[left] <= target && target <= nums[mid - 1])
                         right = mid - 1;
                     else
                         left = mid;
                 }
                 else
                 {
-                    if (target >= nums[mid] && target <= nums[right])
+                    if (nums[mid] <= target && target <= nums[right])
                         left = mid;
                     else
                         right = mid - 1;
                 }
             }
-            return nums[left] != target ? -1 : left;
+            return nums[left] == target ? true : false;
+        }
+        //154. 寻找旋转排序数组中的最小值II
+        public int FindMin(int[] nums)
+        {
+            int left = 0, right = nums.Length - 1;
+            while (left < right)
+            {
+                int mid = left + (right - left) / 2;
+                //左边大、右边小
+                if (nums[mid] > nums[right])
+                    left = mid + 1;
+                else if (nums[mid] < nums[right])
+                    right = mid;
+                else
+                    right--;
+            }
+            return left > nums.Length ? -1 : nums[left];
+        }
+        //面试题 10.03. 搜索旋转数组
+        public int Search3(int[] arr, int target)
+        {
+            int left = 0, right = arr.Length - 1;
+            while (left < right)
+            {
+                int mid = left + (right - left) / 2;
+                //
+                if (arr[mid] > arr[right])
+                {
+                    if (arr[mid] >= target && target <= arr[right])
+                        right = mid;
+                    else
+                        left = mid - 1;
+
+                }
+                else
+                {
+                    if (arr[left] <= target && target < arr[mid])
+                        right = mid;
+                    else
+                        left = mid - 1;
+                }
+            }
+            return left > arr.Length ? -1 : left;
         }
         #endregion
 
