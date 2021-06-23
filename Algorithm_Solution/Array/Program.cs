@@ -333,6 +333,49 @@ namespace Array
             }
             return left > arr.Length ? -1 : left;
         }
+        //154. 寻找旋转排序数组中的最小值II
+        public int FindMin(int[] nums)
+        {
+            int left = 0, right = nums.Length - 1;
+            while (left < right)
+            {
+                int mid = left + (right - left) / 2;
+                //左边大、右边小
+                if (nums[mid] > nums[right])
+                    left = mid + 1;
+                else if (nums[mid] < nums[right])
+                    right = mid;
+                else
+                    right--;
+            }
+            return left > nums.Length ? -1 : nums[left];
+        }
+        //面试题 10.03. 搜索旋转数组
+        public int Search3(int[] arr, int target)
+        {
+            int left = 0, right = arr.Length - 1;
+            while (left < right)
+            {
+                int mid = left + (right - left) / 2;
+                //
+                if (arr[mid] > arr[right])
+                {
+                    if (arr[mid] >= target && target <= arr[right])
+                        right = mid;
+                    else
+                        left = mid - 1;
+
+                }
+                else
+                {
+                    if (arr[left] <= target && target < arr[mid])
+                        right = mid;
+                    else
+                        left = mid - 1;
+                }
+            }
+            return left > arr.Length ? -1 : left;
+        }
         #endregion
 
         #region 滑动窗口
