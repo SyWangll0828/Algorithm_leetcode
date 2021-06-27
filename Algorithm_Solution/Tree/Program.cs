@@ -20,6 +20,12 @@ namespace Tree
 
     class Problems
     {
+        //104. 二叉树的最大深度
+        public int MaxDepth(TreeNode root)
+        {
+            return root == null ? 0 : Math.Max(MaxDepth(root.left), MaxDepth(root.right)) + 1;
+        }
+
         #region 深度优先搜索
         //112. 路径总和
         public bool HasPathSum(TreeNode root, int targetSum)

@@ -15,7 +15,7 @@ namespace BitManipulation
             Knowledge k = new Knowledge();
             //静态方法直接访问
             //bool isPrime= Knowledge.isPrime(4);
-            problems.HammingWeight(9);
+            problems.SingleNumber(testCase.nums);
             //problems.AddBinary("11", "1");
         }
     }
@@ -41,6 +41,24 @@ namespace BitManipulation
         public bool IsPowerOfTwo(int n)
         {
             return n > 1 && (n & (n - 1)) == 0;
+        }
+        //剑指 Offer 56 - II. 数组中数字出现的次数 II
+        public int SingleNumber(int[] nums)
+        {
+            //n 是数字出现的次数
+            int res = 0;
+            for (int i = 0; i < 32; i++)
+            {
+                int oneCount = 0;
+                for (int j = 0; j < nums.Length; j++)
+                {
+                    oneCount += (nums[j] >> i) & 1;
+                }
+                //如果1的个数不是3的倍数，说明那个只出现一次的数字的二进制位中在这一位是1
+                if (oneCount % 3 == 1)
+                    res |= (1 << i);
+            }
+            return res;
         }
 
         //位运算 

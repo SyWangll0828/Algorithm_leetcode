@@ -15,19 +15,21 @@ namespace Array
             Knowledge knowledge = new Knowledge();
             //实例化可以访问类成员;直接访问需要添加static
             Common.Case testCase = new Common.Case();
+            //不等长二维数组
+            int[][] aInt = new int[2][];
+            aInt[0] = new int[] { 5 };
+            aInt[1] = new int[] { 6 };
+            int[,] ab2 = new int[2, 1] { { 5 }, { 6 } };
 
-            int[,] f = new int[3, 7];
-
-            problems.UniquePaths(3, 7);
+            problems.PrintNumbers(2);
             //int[] testNums = knowledge.Reverse(testCase.nums);
             //Console.WriteLine(string.Join("", testNums.ToArray()));
             //problems.IntToRoman(testCase.MyProperty2);
             Knowledge.Rank(3, testCase.index);
             int[] test = new int[] { 15, 16, 19, 20, 25, 1, 3, 4, 5, 7, 10, 14 };
             //var rcptnos = new List<string>();
-            problems.Search3(test, 5);
             //var n = problems.TwoSum2(new int[] { 2, 2, 7, 11, 15 }, 100);
-            //problems.LengthOfLongestSubstring("pwwkew");
+            problems.FindNumberIn2DArray(aInt, 6);
             //problems.ContainsNearbyDuplicate(testCase.nums, 1);
             double a = 1.0 / 0.0;
             Console.ReadKey();
@@ -36,6 +38,17 @@ namespace Array
 
     class Problems
     {
+        public int[] PrintNumbers(int n)
+        {
+            //可以使用全排列??来解决 
+            int maxValue = (int)Math.Pow(10, n) - 1;
+            int[] res = new int[maxValue];
+            for (int i = 0; i < maxValue; i++)
+            {
+                res[i] = i + 1;
+            }
+            return res;
+        }
         //414. 第三大的数
         public int ThirdMax(int[] nums)
         {
@@ -81,6 +94,51 @@ namespace Array
             return null;
         }
 
+        //剑指 Offer 04. 二维数组中的查找
+        public bool FindNumberIn2DArray(int[][] matrix, int target)
+        {
+            //暴力法
+            //if (matrix == null || matrix.Length == 0 || matrix[0].Length == 0) return false;
+            //int rows = matrix.Count(), columns = matrix[0].Length;
+            //for (int i = 0; i < rows; i++)
+            //{
+            //    for (int j = 0; j < columns; j++)
+            //    {
+            //        if (matrix[i][j] == target) return true;
+            //    }
+            //}
+            //return false;
+            //二分
+            //if (matrix == null || matrix.Length == 0 || matrix[0].Length == 0) return false;
+            //for (int i = 0; i < matrix.Count(); i++)
+            //{
+            //    int left = 0, right = matrix[0].Length - 1;
+            //    while (left < right)
+            //    {
+            //        int mid = left + ((right - left) >> 1);
+            //        if (matrix[i][mid] == target) return true;
+            //        if (matrix[i][mid] > target)
+            //        {
+            //            right = mid;
+            //        }
+            //        else
+            //            left = mid + 1;
+            //    }
+            //    if (matrix[i][left] == target) return true;
+            //}
+            //return false;
+
+            if (matrix == null || matrix.Length == 0 || matrix[0].Length == 0) return false;
+            //从二维数组的右上角开始查找
+            int row = 0, column = matrix[0].Length - 1;
+            while (row < matrix.Count() && column >= 0)
+            {
+                if (matrix[row][column] == target) return true;
+                else if (matrix[row][column] > target) column--;
+                else row++;
+            }
+            return false;
+        }
         #region 二分查找
         //模板--在取左边区间还是右边区间时需要分析问题中可以通过收缩*边界，锁定最值的范围
         //left<right
@@ -333,49 +391,6 @@ namespace Array
             }
             return left > arr.Length ? -1 : left;
         }
-        //154. 寻找旋转排序数组中的最小值II
-        public int FindMin(int[] nums)
-        {
-            int left = 0, right = nums.Length - 1;
-            while (left < right)
-            {
-                int mid = left + (right - left) / 2;
-                //左边大、右边小
-                if (nums[mid] > nums[right])
-                    left = mid + 1;
-                else if (nums[mid] < nums[right])
-                    right = mid;
-                else
-                    right--;
-            }
-            return left > nums.Length ? -1 : nums[left];
-        }
-        //面试题 10.03. 搜索旋转数组
-        public int Search3(int[] arr, int target)
-        {
-            int left = 0, right = arr.Length - 1;
-            while (left < right)
-            {
-                int mid = left + (right - left) / 2;
-                //
-                if (arr[mid] > arr[right])
-                {
-                    if (arr[mid] >= target && target <= arr[right])
-                        right = mid;
-                    else
-                        left = mid - 1;
-
-                }
-                else
-                {
-                    if (arr[left] <= target && target < arr[mid])
-                        right = mid;
-                    else
-                        left = mid - 1;
-                }
-            }
-            return left > arr.Length ? -1 : left;
-        }
         #endregion
 
         #region 滑动窗口
@@ -419,10 +434,10 @@ namespace Array
         //边界条件
 
         //10. 正则表达式匹配
-        public bool IsMatch(string s, string p)
-        {
+        //public bool IsMatch(string s, string p)
+        //{
 
-        }
+        //}
 
         //53. 最大子序和
         public int MaxSubArray(int[] nums)

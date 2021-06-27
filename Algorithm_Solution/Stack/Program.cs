@@ -20,7 +20,6 @@ namespace Stack
             //problems.DecodeString(testCase.s);
             //problems.NextGreaterElement(testCase.nums1, testCase.nums2);
             //problems.NextGreaterElements(testCase.nums1);
-            problems.Test2();
             //problems.BuildArray(testCase.traget, testCase.n);
             //problems.EvalRPN(testCase.tokens);
             Console.ReadKey();
@@ -402,7 +401,7 @@ namespace Stack
                     Console.WriteLine($"属性名称：{item.Name}，类型：{type}，值：{item.GetValue(m)}");
                 }
             }
-            
+
         }
     }
 
