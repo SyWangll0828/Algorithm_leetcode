@@ -47,4 +47,27 @@ namespace Common
             return arr;
         }
     }
+
+    //单例模式
+    sealed class MyClass1
+    {
+        private MyClass1()
+        {
+
+        }
+
+        private static readonly object syncObj = new object();
+        private static MyClass1 myClass = null;
+        private static MyClass1 MyClass
+        {
+            get{
+                lock (syncObj)
+                {
+                    if (myClass == null)
+                        myClass = new MyClass1();
+                }
+                return myClass;
+            }
+        }
+    }
 }

@@ -441,7 +441,7 @@ namespace Stack
         }
     }
 
-    //232. 用栈实现队列
+    //232. 用（两个）栈实现队列
     public class MyQueue
     {
         //后入先出的输出栈模拟先入先出的队列
@@ -496,7 +496,7 @@ namespace Stack
         }
     }
 
-    //225. 用队列实现栈
+    //225. 用（两个）队列实现栈
     public class MyStack
     {
         Queue<int> queue;
@@ -537,6 +537,43 @@ namespace Stack
         public bool Empty()
         {
             return tepmpQueue.Count == 0;
+        }
+    }
+
+    //剑指 Offer 09. 用两个栈实现队列
+    public class CQueue
+    {
+        //后入先出的输出栈模拟先入先出的队列
+        Stack<int> inStack;
+        Stack<int> outStack;
+        public CQueue()
+        {
+            inStack = new Stack<int>();
+            outStack = new Stack<int>();
+        }
+
+        public void AppendTail(int value)
+        {
+            inStack.Push(value);
+        }
+
+        public int DeleteHead()
+        {
+            if (inStack.Count == 0 && outStack.Count == 0) return -1;
+            //输出栈没有元素，则将输入栈倒插到输出栈
+            if (!outStack.Any())
+            {
+                inOutStack(inStack);
+            }
+            return outStack.Pop();
+        }
+
+        public void inOutStack(Stack<int> stack)
+        {
+            while (stack.Any())
+            {
+                outStack.Push(inStack.Pop());
+            }
         }
     }
 

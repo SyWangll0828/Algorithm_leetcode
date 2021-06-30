@@ -24,6 +24,7 @@ namespace Graph
 
     class Problems
     {
+        //处理边权为 1 的最短路问题
         #region 广度优先搜索 BFS
         //无向图中两个顶点之间的最短路径的长度，可以通过广度优先遍历得到；
         //为什么 BFS 得到的路径最短？可以把起点和终点所在的路径拉直来看，两点之间线段最短；
@@ -265,6 +266,37 @@ namespace Graph
                 //foreach (var num in newNums) Console.WriteLine(num + " ");
                 return newNums;
             }
+        }
+
+        //815. 公交路线
+        public int NumBusesToDestination(int[][] routes, int source, int target)
+        {
+            //起始时将「起点车站」所能进入的「路线」进行入队，每次从队列中取出「路线」时，查看该路线是否包含「终点车站」：
+                //包含「终点车站」：返回进入该线路所花费的距离
+                //不包含「终点车站」：遍历该路线所包含的车站，将由这些车站所能进入的路线，进行入队
+            //一些细节：由于是求最短路，同一路线重复入队是没有意义的，因此将新路线入队前需要先判断是否曾经入队。
+            //朴素BFS
+            if (source == target) return 0;
+            Queue<int> queue = new Queue<int>();
+            queue.Enqueue(source);
+            Dictionary<int, int> visitedSet = new Dictionary<int, int>();
+            visitedSet.Add(source, 0);
+
+            while (queue.Any())
+            {
+                int station = queue.Dequeue();
+                int step = visitedSet[station];
+                if (target == station) return step;
+                for (int i = 1; i <; i++)
+                {
+                    //被记录过,跳过
+                    if (visitedSet.ContainsKey(station)) continue;
+                    //将移动路径记录
+                    visitedSet.Add(station, step + 1);
+                    queue.Enqueue(station);
+                }
+            }
+            return -1;
         }
         #endregion
 

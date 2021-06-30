@@ -38,6 +38,14 @@ namespace Array
 
     class Problems
     {
+        //5. 最长回文子串
+        /* public string LongestPalindrome(string s)
+        {
+            int length = s.Length;
+            if (length == 1)
+                return s;
+
+        } */
         public int[] PrintNumbers(int n)
         {
             //可以使用全排列??来解决 
