@@ -287,7 +287,7 @@ namespace Graph
                 int station = queue.Dequeue();
                 int step = visitedSet[station];
                 if (target == station) return step;
-                for (int i = 1; i <; i++)
+                for (int i = 1; i <100; i++)
                 {
                     //被记录过,跳过
                     if (visitedSet.ContainsKey(station)) continue;
@@ -298,6 +298,30 @@ namespace Graph
             }
             return -1;
         }
+
+        //LCP 07. 传递信息
+        public int NumWays(int n, int[][] relation, int k)
+        {
+            //朴素BFS
+            int len = relation[0].Length;
+            Queue<int> queue = new Queue<int>();
+            queue.Enqueue(0);
+            Dictionary<int, int> visitedSet = new Dictionary<int, int>();
+            visitedSet.Add(1, 0);
+
+            while (queue.Any())
+            {
+                int position = queue.Dequeue();
+                int step = visitedSet[position];
+                if (position == len * len) return step;
+                for (int i = 1; i <= 6; i++)
+                {
+
+                }
+            }
+            return -1;
+        }
+
         #endregion
 
         #region 深度优先搜索 DFS

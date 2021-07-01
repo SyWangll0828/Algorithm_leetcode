@@ -142,19 +142,19 @@ namespace Tree
     }
 
     //297. 二叉树的序列化与反序列化
-    class Codec
-    {
-        // Encodes a tree to a single string.
-        public string serialize(TreeNode root)
-        {
-        }
+    //class Codec
+    //{
+    //    // Encodes a tree to a single string.
+    //    public string serialize(TreeNode root)
+    //    {
+    //    }
 
-        // Decodes your encoded data to tree.
-        public TreeNode deserialize(string data)
-        {
+    //    // Decodes your encoded data to tree.
+    //    public TreeNode deserialize(string data)
+    //    {
 
-        }
-    }
+    //    }
+    //}
 
     class TreeNode
     {

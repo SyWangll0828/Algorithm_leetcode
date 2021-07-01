@@ -437,7 +437,7 @@ namespace Array
         #endregion
 
         #region 动态规划
-        //状态定义
+        //状态定义  无后效性问题
         //转移方程
         //边界条件
 
@@ -576,6 +576,21 @@ namespace Array
                     counts[j] += counts[j - 1];
 
             return counts.Min();
+        }
+        //LCP 07. 传递信息
+        public int NumWays(int n, int[][] relation, int k)
+        {
+            int[,] f = new int[k + 1, n];
+            f[0, 0] = 1;
+            for (int i = 1; i <= k; i++)
+            {
+                foreach (var r in relation)
+                {
+                    int a = r[0], b = r[1];
+                    f[i, b] += f[i - 1, a];
+                }
+            }
+            return f[k, n - 1];
         }
         #endregion
     }

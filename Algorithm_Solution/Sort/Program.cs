@@ -157,7 +157,7 @@ namespace Sort
                 }
                 while (i <= mid) temp[k++] = paras[i++];
                 while (j <= rightBound) temp[k++] = paras[j++];
-                for (int i = 0; i < temp.Length-1; i++) paras[i] == temp[i];
+                //for (int m = 0; m < temp.Length-1; m++) paras[m] == temp[m];
             }
 
 

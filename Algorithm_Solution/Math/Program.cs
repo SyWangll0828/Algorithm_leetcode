@@ -16,7 +16,7 @@ namespace Math
             //实例化可以访问类成员;带有static的可以直接访问
             Common.Case testCase = new Common.Case();
             //Console.WriteLine(problems.RestoreString(testCase.s, testCase.index));
-            //problems.CuttingRope(120);
+            problems.NumWays(7);
             //problems.checkSubarraySum(testCase.nums, 6);
             Console.ReadKey();
         }
@@ -77,6 +77,36 @@ namespace Math
             if (b == 0) return (int)(rem * 3 % p);
             if (b == 1) return (int)(rem * 4 % p);
             return (int)(rem * 6 % p);
+        }
+
+        //快速幂 -- 分治思想
+        //50. Pow(x, n)
+        public double MyPow(double x, int n)
+        {
+            long N = n;
+            return N >= 0 ? quickMul(x, N) : 1.0 / quickMul(x, -N);
+            //x→x^2→x^4→x^9→x^19→x^38→x^77
+            //n为奇数需再乘一个x 
+            //递归
+            double quickMul(double xTemp, long NTemp)
+            {
+                if (NTemp == 0) return 1.0;
+                double y = quickMul(xTemp, NTemp >> 1);
+                return NTemp % 2 == 0 ? y * y : y * y * xTemp;
+            }
+            //迭代
+            double quickMul2(double xTemp, long NTemp)
+            {
+                double res = 1;
+                double xMul = xTemp;
+                while (NTemp > 0)
+                {
+                    if (NTemp % 2 == 1) res *= xMul;
+                    xMul *= xMul;
+                    NTemp >>= 1;
+                }
+                return res;
+            }
         }
 
         //6. Z 字形变换
@@ -147,9 +177,9 @@ namespace Math
         }
         //剑指 Offer 10- I. 斐波那契数列
         int[] cache = new int[101];
-        public int Fib(int n)
+        public int FibTwo(int n)
         {
-            //动态规划
+            //动态规划 从下往上计算
             int a = 0, b = 1, sum;
             for (int i = 0; i < n; i++)
             {
@@ -165,29 +195,44 @@ namespace Math
             //    cache[n] = (Fib(n - 1) + Fib(n - 2)) % 1000000007;
             //return cache[n];
         }
-        //70. 爬楼梯
-        //public int ClimbStairs(int n)
-        //{
-
-        //}
+        //剑指 Offer 10- II. 青蛙跳台阶问题
+        public int NumWays(int n)
+        {
+            //分析过后 依然是斐波那契数列问题
+            int[] res = { 1, 1, 2 };
+            if (n < 3) return res[n];
+            int a = 1, b = 2, sum = 0;
+            for (int i = 3; i <= n; i++)
+            {
+                sum = (a + b) % 1000000007;
+                a = b;
+                b = sum;
+            }
+            return sum;
+        }
 
         #endregion
 
         #region 位运算
         //技巧
-        //(x & 1) == 1 ---等价---> (x % 2 == 1) 二进制最右一位为1
-        //(x & 1) == 0 ---等价---> (x % 2 == 0)
-        //n >>= 1 ： 将二进制数字 nn 无符号右移一位（ Java 中无符号右移为 ">>>>>>" ）
-        //x / 2 ---等价---> x >> 1
-        //x & (x - 1) ------> 把x最低位的二进制1给去掉
-        //x & -x -----> 得到最低位的1
-        //x & ~x -----> 0
+        //1、与（&）
+        //1&1=1 其余都为0 --> (x % 2 == 1) 二进制最右一位为1
+        //x & (x - 1) --> 把x最低位的二进制1给去掉 0&1=0
+        //x & -x --> 得到最低位的1  
+        //x & ~x --> 0
+        //2、或（|）
+        //3、异或（^）
         //x ^ 0 = x, x ^ x = 0    a ^ b = c, a ^ c = b, b ^ c = a
+        //4、左移（<<）
+        //5、右移（>>） -->  x >> 2 = x / 4 右移2位
+        //如果数字原先是负数，则右移之后在最左边补n个1。
+        //n >>= 1 ： 将二进制数字 n 无符号右移一位
+
         //大写变小写、小写变大写：字符 ^= 32
         //大写变小写、小写变小写：字符 |= 32
         //大写变大写、小写变大写：字符 &= -33 
         //如果 n 是正整数并且 n & (n - 1) = 0 或者 n & (-n) = n，那么 n 就是 2 的幂。
-        //4的幂-- n % 3 == 1
+
 
         //231. 2 的幂
         public bool IsPowerOfTwo(int n)
