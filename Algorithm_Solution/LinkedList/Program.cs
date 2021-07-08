@@ -11,11 +11,26 @@ namespace LinkedList
     {
         static void Main(string[] args)
         {
-
+            Problems problems = new Problems();
+            //实例化可以访问类成员;直接访问需要添加static
+            ListNode head = new ListNode(1)
+            {
+                next = new ListNode(3)
+                {
+                    next = new ListNode(2)
+                }
+            };
+            Common.Case testCase = new Common.Case();
+            problems.RemoveNthFromEnd(head, 2);
         }
     }
     class Problems
     {
+        //链表常用方式，固定下来的解题：
+        //方便对头节点的操作，创建哑节点dummy.next
+        //cur = dummy, cur指向当前节点
+        //cur = cur.next，进行链表遍历
+
         //剑指 Offer 06. 从尾到头打印链表
         public int[] ReversePrint(ListNode head)
         {
@@ -46,6 +61,28 @@ namespace LinkedList
             //    res[i] = stack.Pop();
             //}
             //return res;
+        }
+
+        //19. 删除链表的倒数第 N 个结点
+        public ListNode RemoveNthFromEnd(ListNode head, int n)
+        {
+            ListNode dummy = head;
+            int sum = 0, count = 0;
+            //循环有多少个结点
+            while (dummy != null)
+            {
+                dummy = dummy.next;
+                sum++;
+            }
+            if (sum == n) return head.next;
+            var cur = head;
+            while (count < sum - n - 1)
+            {
+                cur = cur.next;
+                count++;
+            }
+            cur.next = cur.next.next;
+            return head;
         }
 
         //21. 合并两个有序链表

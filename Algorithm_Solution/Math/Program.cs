@@ -16,25 +16,94 @@ namespace Math
             //实例化可以访问类成员;带有static的可以直接访问
             Common.Case testCase = new Common.Case();
             //Console.WriteLine(problems.RestoreString(testCase.s, testCase.index));
-            problems.NumWays(7);
-            //problems.checkSubarraySum(testCase.nums, 6);
+            char[] res = new char[] { 'h', 'e', 'l', 'l', 'o' };
+            int[] res1 = new int[] { 1, 3 };
+            int[] res2 = new int[] { 1, 0, 1, 0, 1 };
+            //problems.NumSubarraysWithSum(res2, 2);
             Console.ReadKey();
         }
     }
     class Problems
     {
-        //168. Excel表列名称
-        public string ConvertToTitle(int columnNumber)
+        //移动零
+        public void MoveZeroes(int[] nums)
         {
-            if (columnNumber < 1) return null;
-            string name = "";
-            while (columnNumber >= 1)
+            //双指针
+            int len = nums.Length;
+            int slow = 0, quick = 1;
+            while (slow < len && quick < len)
             {
-                columnNumber--;
-                name = (char)(columnNumber % 26 + 'A') + name;
-                columnNumber /= 26;
+                if (nums[slow] == 0 && nums[quick] != 0)
+                {
+                    swap(slow, quick);
+                    slow++;
+                    quick++;
+                }
+                else if (nums[slow] == 0 && nums[quick] == 0)
+                    quick++;
+                else
+                    slow++;
+                quick++;
             }
-            return name;
+
+            void swap(int low, int high)
+            {
+                int temp = nums[high];
+                nums[high] = nums[low];
+                nums[low] = temp;
+            }
+        }
+
+        //645. 错误的集合
+        public int[] FindErrorNums(int[] nums)
+        {
+            int n = nums.Length;
+            int[] cnts = new int[n + 1];
+            //用数组下标与对应的值模拟哈希表
+            foreach (int x in nums) cnts[x]++;
+            int[] ans = new int[2];
+            for (int i = 1; i <= n; i++)
+            {
+                if (cnts[i] == 0) ans[1] = i;
+                if (cnts[i] == 2) ans[0] = i;
+            }
+            return ans;
+            //桶排序？
+        }
+
+        //451. 根据字符出现频率排序
+        public string FrequencySort(string s)
+        {
+            Dictionary<char, int> dict = new Dictionary<char, int>();
+            foreach (var c in s)
+            {
+                dict[c] = dict.TryGetValue(c, out var n) ? n + 1 : 1;
+            }
+            //List<char> list = new List<char>(dict.Keys);
+            //list.Sort((a, b) => dict[b].CompareTo(dict[a]));
+            var arr = dict.Keys.ToArray();
+            //按照字符从小到大进行排序
+            Array.Sort(arr, (a, b) => dict[b].CompareTo(dict[a]));
+            StringBuilder sb = new StringBuilder();
+            foreach (var c in arr)
+            {
+                sb.Append(c, dict[c]);
+            }
+            return sb.ToString();
+        }
+
+
+        //剑指 Offer 17. 打印从1到最大的n位数
+        //考虑大数问题
+        public int[] PrintNumbers(int n)
+        {
+            int maxValue = (int)System.Math.Pow(10, n) - 1;
+            int[] res = new int[maxValue];
+            for (int i = 0; i < maxValue; i++)
+            {
+                res[i] = i + 1;
+            }
+            return res;
         }
 
         //任何大于1的数都可由2和3相加组成（根据奇偶证明）
@@ -62,53 +131,6 @@ namespace Math
             return (int)(res * n);
         }
 
-        //剑指 Offer 14- II.剪绳子 II
-        public int CuttingRope(int n)
-        {
-            if (n < 4) return n - 1;
-            int b = n % 3, p = 1000000007;
-            long rem = 1, x = 3;
-            //快速幂求余
-            for (int a = n / 3 - 1; a > 0; a /= 2)
-            {
-                if (a % 2 == 1) rem = (rem * x) % p;
-                x = (x * x) % p;
-            }
-            if (b == 0) return (int)(rem * 3 % p);
-            if (b == 1) return (int)(rem * 4 % p);
-            return (int)(rem * 6 % p);
-        }
-
-        //快速幂 -- 分治思想
-        //50. Pow(x, n)
-        public double MyPow(double x, int n)
-        {
-            long N = n;
-            return N >= 0 ? quickMul(x, N) : 1.0 / quickMul(x, -N);
-            //x→x^2→x^4→x^9→x^19→x^38→x^77
-            //n为奇数需再乘一个x 
-            //递归
-            double quickMul(double xTemp, long NTemp)
-            {
-                if (NTemp == 0) return 1.0;
-                double y = quickMul(xTemp, NTemp >> 1);
-                return NTemp % 2 == 0 ? y * y : y * y * xTemp;
-            }
-            //迭代
-            double quickMul2(double xTemp, long NTemp)
-            {
-                double res = 1;
-                double xMul = xTemp;
-                while (NTemp > 0)
-                {
-                    if (NTemp % 2 == 1) res *= xMul;
-                    xMul *= xMul;
-                    NTemp >>= 1;
-                }
-                return res;
-            }
-        }
-
         //6. Z 字形变换
         //public string Convert(string s, int numRows)
         //{
@@ -126,91 +148,150 @@ namespace Math
         //    }
         //}
 
-        #region 前缀和问题
-        //523. 连续的子数组和
-        public bool checkSubarraySum(int[] nums, int k)
+        #region 模拟 找规律
+        //240. 搜索二维矩阵 II
+        public bool SearchMatrix(int[][] matrix, int target)
         {
-            //同余定理：如果两个整数m、n满足n-m能被k整除，那么n和m对k同余
-            int n = nums.Length;
-            int[] sum = new int[n + 1];
-            //处理前缀和数组
-            for (int i = 1; i <= n; i++) sum[i] = sum[i - 1] + nums[i - 1];
-            HashSet<int> set = new HashSet<int>();
-            for (int i = 2; i <= n; i++)
+            //右上角的数
+            //行中最大，列中最小
+            //int row = 0;
+            //int col = matrix[0].Length - 1;
+            //while (row < matrix.Length && col >= 0)
+            //{
+            //    if (matrix[row][col] == target) return true;
+            //    else if (matrix[row][col] > target) col--;
+            //    else row++;
+            //}
+            //return false;
+
+            //左下角的数
+            //行中最小，列中最大
+            int row = matrix.Length - 1;
+            int col = 0;
+            while (row >= 0 && col < matrix[0].Length)
             {
-                set.Add(sum[i - 2] % k);
-                if (set.Contains(sum[i] % k)) return true;
+                if (matrix[row][col] == target) return true;
+                else if (matrix[row][col] > target) row--;
+                else col++;
             }
             return false;
         }
-        //525. 连续数组
-        public int FindMaxLength(int[] nums)
-        {
-            //求最长一段区间和为 00 的子数组
-            int n = nums.Length;
-            int[] sum = new int[n + 1];
-            //处理前缀和数组
-            for (int i = 1; i <= n; i++) sum[i] = sum[i - 1] + (nums[i - 1] == 1 ? 1 : -1);
-            int ans = 0;
-            Dictionary<int, int> dict = new Dictionary<int, int>();
-            dict.Add(0, 0);
-            //
-            for (int i = 2; i <= n; i++)
-            {
-                if (!dict.ContainsKey(sum[i - 2])) dict.Add(sum[i - 2], i - 2);
-                if (dict.ContainsKey(sum[i])) ans = System.Math.Max(ans, i - dict[sum[i]]);
-            }
-            return ans;
-        }
-        #endregion
 
-        #region 动态规划
-        //剑指 Offer 62. 圆圈中最后剩下的数字 (约瑟夫环问题)
-        public int LastRemaining(int n, int m)
+        //48. 旋转图像
+        public void Rotate(int[][] matrix)
         {
-            int x = 0;
-            for (int i = 2; i <= n; i++)
+            //90°翻转 == 先水平再对角线翻转
+            int n = matrix.Length;
+            //顺时针旋转90°
+            //先水平翻转
+            for (int i = 0; i < n / 2; i++)
             {
-                x = (x + m) % i;
+                for (int j = 0; j < n; j++)
+                {
+                    int temp = matrix[i][j];
+                    matrix[i][j] = matrix[n - i - 1][j];
+                    matrix[n - i - 1][j] = temp;
+                }
             }
-            return x;
-        }
-        //剑指 Offer 10- I. 斐波那契数列
-        int[] cache = new int[101];
-        public int FibTwo(int n)
-        {
-            //动态规划 从下往上计算
-            int a = 0, b = 1, sum;
+            //再对角线翻转
             for (int i = 0; i < n; i++)
             {
-                sum = (a + b) % 1000000007;
-                a = b;
-                b = sum;
+                for (int j = 0; j < i; ++j)
+                {
+                    int temp = matrix[i][j];
+                    matrix[i][j] = matrix[j][i];
+                    matrix[j][i] = temp;
+                }
             }
-            return a;
-            //递归超时
-            //记忆化递归
-            //if (n < 2) return n;
-            //if (cache[n] == 0)
-            //    cache[n] = (Fib(n - 1) + Fib(n - 2)) % 1000000007;
-            //return cache[n];
-        }
-        //剑指 Offer 10- II. 青蛙跳台阶问题
-        public int NumWays(int n)
-        {
-            //分析过后 依然是斐波那契数列问题
-            int[] res = { 1, 1, 2 };
-            if (n < 3) return res[n];
-            int a = 1, b = 2, sum = 0;
-            for (int i = 3; i <= n; i++)
+
+            //原地翻转  找规律
+            //int n = matrix.length;
+            for (int i = 0; i < n / 2; ++i)
             {
-                sum = (a + b) % 1000000007;
-                a = b;
-                b = sum;
+                for (int j = 0; j < (n + 1) / 2; ++j)
+                {
+                    int temp = matrix[i][j];
+                    matrix[i][j] = matrix[n - j - 1][i];
+                    matrix[n - j - 1][i] = matrix[n - i - 1][n - j - 1];
+                    matrix[n - i - 1][n - j - 1] = matrix[j][n - i - 1];
+                    matrix[j][n - i - 1] = temp;
+                }
             }
-            return sum;
+        }
+        //54. 螺旋矩阵
+        public IList<int> SpiralOrder(int[][] matrix)
+        {
+            //模拟螺旋走位
+            List<int> res = new List<int>();
+            int up = 0, down = matrix.Length - 1, left = 0, right = matrix[0].Length - 1, index = matrix.Length * matrix[0].Length;
+            while (index >= 1)
+            {
+                //从左到右
+                for (int i = left; i <= right && index >= 1; i++)
+                {
+                    res.Add(matrix[up][i]);
+                    index--;
+                }
+                up++;
+                //从上到下
+                for (int i = up; i <= down && index >= 1; i++)
+                {
+                    res.Add(matrix[i][right]);
+                    index--;
+                }
+                right--;
+                //从右到左
+                for (int i = right; i >= left && index >= 1; i--)
+                {
+                    res.Add(matrix[down][i]);
+                    index--;
+                }
+                down--;
+                //从下到上
+                for (int i = down; i >= up && index >= 1; i--)
+                {
+                    res.Add(matrix[i][left]);
+                    index--;
+                }
+                left++;
+            }
+            return res;
         }
 
+        //59. 螺旋矩阵Ⅱ
+        public int[][] GenerateMatrix(int n)
+        {
+            int[][] res = new int[n][];
+            for (int i = 0; i < n; i++)
+            {
+                if (res[i] == null) res[i] = new int[n];
+            }
+            int up = 0, down = n - 1, left = 0, right = n - 1, index = 1;
+            while (index <= n * n)
+            {
+                for (int i = left; i <= right; i++)
+                {
+                    res[up][i] = index++;
+                }
+                up++;
+                for (int i = up; i <= down; i++)
+                {
+                    res[i][right] = index++;
+                }
+                right--;
+                for (int i = right; i >= left; i--)
+                {
+                    res[down][i] = index++;
+                }
+                down--;
+                for (int i = down; i >= up; i--)
+                {
+                    res[i][left] = index++;
+                }
+                left++;
+            }
+            return res;
+        }
         #endregion
 
         #region 位运算
@@ -233,6 +314,19 @@ namespace Math
         //大写变大写、小写变大写：字符 &= -33 
         //如果 n 是正整数并且 n & (n - 1) = 0 或者 n & (-n) = n，那么 n 就是 2 的幂。
 
+        public int FindDuplicate(int[] nums)
+        {
+            int len = nums.Length;
+            //位运算 异或
+            int sum = 0;
+            for (int i = 0; i < len; i++)
+            {
+                int temp = sum;
+                sum ^= nums[i];
+                if (temp == sum) return nums[i];
+            }
+            return -1;
+        }
 
         //231. 2 的幂
         public bool IsPowerOfTwo(int n)
@@ -278,30 +372,50 @@ namespace Math
         //67. 二进制求和
         public string AddBinary(string a, string b)
         {
-            int lengthA = a.Length;
-            int lengthB = b.Length;
-            //先保持两字符串长度一致
-            while (lengthA > lengthB)
+            //int lengthA = a.Length;
+            //int lengthB = b.Length;
+            ////先保持两字符串长度一致
+            //while (lengthA > lengthB)
+            //{
+            //    b = '0' + b;
+            //    lengthB++;
+            //}
+            //while (lengthB > lengthA)
+            //{
+            //    a = '0' + a;
+            //    lengthA++;
+            //}
+            //string res = "";
+            ////模拟进位
+            //int carry = 0;//进位
+            //for (int i = lengthA - 1; i >= 0; i--)
+            //{
+            //    int sum = a[i] - '0' + b[i] - '0' + carry;
+            //    res = ((char)(sum % 2 + '0')).ToString() + res;
+            //    carry = sum / 2;//进位更新
+            //}
+            //res = carry > 0 ? '1' + res : res;
+            //return res;
+
+            int i = a.Length - 1, j = b.Length - 1, add = 0;
+            StringBuilder ans = new StringBuilder();
+            while (i >= 0 || j >= 0 || add != 0)
             {
-                b = '0' + b;
-                lengthB++;
+                int x = i >= 0 ? a[i] - '0' : 0;
+                int y = j >= 0 ? b[j] - '0' : 0;
+                int result = x + y + add;
+                ans.Append(result % 10);
+                add = result / 10;
+                i--;
+                j--;
             }
-            while (lengthB > lengthA)
+            // 计算完以后的答案需要翻转过来
+            StringBuilder res = new StringBuilder();
+            for (int m = ans.Length - 1; m >= 0; m--)
             {
-                a = '0' + a;
-                lengthA++;
+                res.Append(ans[m]);
             }
-            string res = "";
-            //模拟进位
-            int carry = 0;//进位
-            for (int i = lengthA - 1; i >= 0; i--)
-            {
-                int sum = a[i] - '0' + b[i] - '0' + carry;
-                res = ((char)(sum % 2 + '0')).ToString() + res;
-                carry = sum / 2;//进位更新
-            }
-            res = carry > 0 ? '1' + res : res;
-            return res;
+            return res.ToString();
         }
         //
         public string ToLowerCase(string s)

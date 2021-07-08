@@ -16,7 +16,7 @@ namespace Stack
             //实例化可以访问类成员;直接访问需要添加static
             Common.Case testCase = new Common.Case();
             //problems.IntToRoman(testCase.MyProperty2);
-            //problems.IntToRoman(Common.Case.MyProperty);
+            //problems.ReverseWords("Let's take LeetCode contest");
             //problems.DecodeString(testCase.s);
             //problems.NextGreaterElement(testCase.nums1, testCase.nums2);
             //problems.NextGreaterElements(testCase.nums1);
@@ -43,6 +43,130 @@ namespace Stack
         new Tuple<string, int>("I",1),
         };
 
+        //344. 反转字符串
+        //反转字符串的时候可以只循环一半 i 与 len-i-1 交换
+
+        //726. 原子的数量
+        public string CountOfAtoms(string formula)
+        {
+            int i = 0;
+            int n = formula.Length;
+            Stack<Dictionary<string, int>> stack = new Stack<Dictionary<string, int>>();
+            stack.Push(new Dictionary<string, int>());
+            while (i < n)
+            {
+                char ch = formula[i];
+                if (ch == '(')
+                {
+                    i++;
+                    stack.Push(new Dictionary<string, int>()); // 将一个空的哈希表压入栈中，准备统计括号内的原子数量
+                }
+                else if (ch == ')')
+                {
+                    i++;
+                    int num = ParseNum(); // 括号右侧数字
+                    Dictionary<string, int> popDictionary = stack.Pop(); // 弹出括号内的原子数量
+                    Dictionary<string, int> topDictionary = stack.Peek();
+                    foreach (KeyValuePair<string, int> pair in popDictionary)
+                    {
+                        string atom = pair.Key;
+                        int v = pair.Value;
+                        // 将括号内的原子数量乘上 num，加到上一层的原子数量中
+                        if (topDictionary.ContainsKey(atom))
+                        {
+                            topDictionary[atom] += v * num;
+                        }
+                        else
+                        {
+                            topDictionary.Add(atom, v * num);
+                        }
+                    }
+                }
+                else
+                {
+                    string atom = ParseAtom();
+                    int num = ParseNum();
+                    Dictionary<string, int> topDictionary = stack.Peek();
+                    // 统计原子数量
+                    if (topDictionary.ContainsKey(atom))
+                    {
+                        topDictionary[atom] += num;
+                    }
+                    else
+                    {
+                        topDictionary.Add(atom, num);
+                    }
+                }
+            }
+
+            Dictionary<string, int> dictionary = stack.Pop();
+            List<KeyValuePair<string, int>> pairs = new List<KeyValuePair<string, int>>(dictionary);
+            pairs.Sort((p1, p2) => p1.Key.CompareTo(p2.Key));
+
+            StringBuilder temp = new StringBuilder();
+            foreach (var pair in pairs)
+            {
+                temp.Append(pair.Key);
+                if (pair.Value > 1)
+                {
+                    temp.Append(pair.Value);
+                }
+            }
+            return temp.ToString();
+
+            //获取字母及字母后是否有小写字母
+            string ParseAtom()
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(formula[i++]); // 扫描首字母
+                while (i < n && char.IsLower(formula[i]))
+                {
+                    sb.Append(formula[i++]); // 扫描首字母后的小写字母
+                }
+                return sb.ToString();
+            }
+
+            //获取字母之后的数字
+            int ParseNum()
+            {
+                if (i == n || !char.IsNumber(formula[i]))
+                {
+                    return 1; // 不是数字，视作 1
+                }
+                int num = 0;
+                while (i < n && char.IsNumber(formula[i]))
+                {
+                    num = num * 10 + formula[i++] - '0'; // 扫描数字
+                }
+                return num;
+            }
+        }
+
+        //1711. 大餐计数
+        public int CountPairs(int[] deliciousness)
+        {
+            int mod = 1000000007;
+            Dictionary<int, int> dict = new Dictionary<int, int>();
+            int len = deliciousness.Length;
+            int count = 0;
+            for (int i = 0; i < len; i++)
+            {
+                for (int j = i + 1; j < len; j++)
+                {
+                    int sum = deliciousness[i] + deliciousness[j];
+                    if (sum > 0 && (sum & (sum - 1)) == 0)
+                    {
+                        if (dict.ContainsKey(deliciousness[i])) dict[deliciousness[i]]++;
+                        else dict.Add(deliciousness[i], 1);
+                        int value = 0;
+                        dict.TryGetValue(i, out value);
+                        count = (count + value) % mod;
+                    }
+                    continue;
+                }
+            }
+            return count;
+        }
         public string IntToRoman(int num)
         {
             StringBuilder builder = new StringBuilder();
