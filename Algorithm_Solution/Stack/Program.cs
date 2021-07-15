@@ -43,6 +43,23 @@ namespace Stack
         new Tuple<string, int>("I",1),
         };
 
+        //剑指 Offer 31. 栈的压入、弹出序列
+        public bool ValidateStackSequences(int[] pushed, int[] popped)
+        {
+            Stack<int> stack = new Stack<int>();
+            int j = 0;
+            foreach (var p in pushed)
+            {
+                stack.Push(p);
+                while (stack.Count != 0 && stack.Peek() == popped[j])
+                {
+                    stack.Pop();
+                    j++;
+                }
+            }
+            return stack.Count == 0;
+        }
+
         //344. 反转字符串
         //反转字符串的时候可以只循环一半 i 与 len-i-1 交换
 
@@ -471,34 +488,6 @@ namespace Stack
             return builder.ToString();
         }
 
-        public string Test1()
-        {
-            List<Pzhy> pzhies = new List<Pzhy>()
-            {
-                new Pzhy { phcode = "h-1", remake = "123" },
-                new Pzhy { phcode = "h-2", remake = "345" },
-                new Pzhy { phcode = "h-1", remake = "678" },
-            };
-            var group1 = pzhies.GroupBy(p => p.phcode).Select(o =>
-                new Pzhy()
-                {
-                    phcode = o.Key,
-                    remake = string.Join("", o.Select(t => t.remake).ToArray())
-                }
-            ).ToList();
-            //下面是上面代码的内部解释
-            List<Pzhy> Result = new List<Pzhy>();
-            foreach (IGrouping<string, Pzhy> groupSequence in group1)
-            {
-                Pzhy m = new Pzhy()
-                {
-                    phcode = groupSequence.First().phcode,
-                    remake = string.Join("", groupSequence.Select(t => t.remake).ToArray())
-                };
-                Result.Add(m);
-            }
-            return Result.ToArray().ToString();
-        }
         public void Test2()
         {
             List<Pzhy> pzhies = new List<Pzhy>()

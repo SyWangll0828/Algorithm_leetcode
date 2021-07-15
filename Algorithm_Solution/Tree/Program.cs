@@ -15,7 +15,17 @@ namespace Tree
             Common.Case testCase = new Common.Case();
             int[] t1 = new int[] { 3, 9, 20, 15, 7 };
             int[] t2 = new int[] { 9, 3, 15, 20, 7 };
-            problems.BuildTree(t1, t2);
+
+            TreeNode root = new TreeNode(3)
+            {
+                left = new TreeNode(9),
+                right = new TreeNode(20)
+                {
+                    left = new TreeNode(15),
+                    right = new TreeNode(7)
+                }
+            };
+            problems.LevelOrder2(root);
             //problems.IntToRoman(testCase.MyProperty2);
             Console.ReadKey();
         }
@@ -23,6 +33,110 @@ namespace Tree
 
     class Problems
     {
+        //二叉树的层序遍历并输出
+        public int[] LevelOrder(TreeNode root)
+        {
+            //二叉树的层序遍历
+            //特殊情况
+            if (root == null) return new int[] { };
+            //将根节点依次放到队列中去
+            Queue<TreeNode> q = new Queue<TreeNode>();
+            q.Enqueue(root);
+            List<int> list = new List<int>();
+            while (q.Any())
+            {
+                TreeNode cur = q.Dequeue();
+                list.Add(cur.val);
+                if (cur.left != null)
+                    q.Enqueue(cur.left);
+                if (cur.right != null)
+                    q.Enqueue(cur.right);
+            }
+            return list.ToArray();
+        }
+        //二叉树层序遍历 每层循环个节点 可用与求二叉树的深度、数组输出二叉树等
+        public IList<IList<int>> LevelOrder2(TreeNode root)
+        {
+            List<IList<int>> list = new List<IList<int>>();
+            //特殊情况
+            if (root == null) return list;
+            //将根节点依次放到队列中去
+            Queue<TreeNode> q = new Queue<TreeNode>();
+            q.Enqueue(root);
+            int n = 1;
+            while (q.Any())
+            {
+                List<int> temp = new List<int>();
+                int count = q.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    TreeNode cur = q.Dequeue();
+                    temp.Add(cur.val);
+                    if (cur.left != null)
+                        q.Enqueue(cur.left);
+                    if (cur.right != null)
+                        q.Enqueue(cur.right);
+                }
+                if ((n & 1) == 0) temp.Reverse();
+                list.Add(temp);
+                n++;
+            }
+            return list;
+        }
+        //剑指 Offer 34. 二叉树中和为某一值的路径
+        public IList<IList<int>> PathSum(TreeNode root, int target)
+        {
+            List<IList<int>> res = new List<IList<int>>();
+            List<int> list = new List<int>();
+            dfs(root, target);
+            return res;
+
+            void dfs(TreeNode node, int t)
+            {
+                if (node == null) return;
+                //先序遍历 + 路径记录
+                int temp = node.val;
+                list.Add(temp);
+                t -= temp;
+                if (node.left == null && node.right == null && t == 0)
+                    //需要使用new List<int>(),防止后续更改list，值跟随修改
+                    res.Add(new List<int>(list));
+                dfs(node.left, t);
+                dfs(node.right, t);
+                //回溯之前去掉list中最后的叶子节点
+                list.RemoveAt(list.Count - 1);
+            }
+        }
+
+        public TreeNode TreeToDoublyList(TreeNode root)
+        {
+            if (root == null) return null;
+            TreeNode head = null;
+            //指定当前节点的前一个节点，用于节点间连接
+            TreeNode pre = null;
+            //中序遍历的同时将头和尾之间的节点相连
+            midOrder(root);
+            //将头和尾相连
+            head.left = pre;
+            pre.right = head;
+            return head;
+            void midOrder(TreeNode node)
+            {
+                if (node == null) return;
+                //中序遍历
+                midOrder(node.left);
+                //只有第一进入时执行,及中序遍历的第一个节点
+                if (pre == null) head = node;
+                //指定前一节点的右节点为当前节点
+                else pre.right = node;
+                //反向连接
+                node.left = pre;
+                //指定当前节点
+                pre = node;
+                midOrder(node.right);
+            }
+        }
+
         //104. 二叉树的最大深度
         public int MaxDepth(TreeNode root)
         {
@@ -66,7 +180,7 @@ namespace Tree
         #region 深度优先搜索
         //112. 路径总和
         public bool HasPathSum(TreeNode root, int targetSum)
-        {   //递归 -- 栈的实现
+        {
             if (root == null)
                 return false;
             //叶子节点
@@ -105,8 +219,32 @@ namespace Tree
 
         #endregion
 
-        //BST 二叉搜索树 
+        #region BST 二叉搜索树 
         //中序遍历结果是按升序排列的
+        //后序遍历定义： [左子树 | 右子树 | 根节点] ，即遍历顺序为 “左、右、根” 。
+        //二叉搜索树定义： 左子树中所有节点的值 << 根节点的值；右子树中所有节点的值 >> 根节点的值；其左、右子树也分别为二叉搜索树
+        //结点值:left<root<right
+        public bool VerifyPostorder(int[] postorder)
+        {
+            return helper(0, postorder.Length - 1);
+            bool helper(int left, int right)
+            {
+                //特殊情况
+                if (left >= right) return true;
+                //先找到左子树与右子树的分界点
+                int mid = left;
+                while (postorder[mid] < postorder[right]) mid++;
+                //验证右子树中的值是不是比根结点的值大
+                int temp = mid;
+                for (int i = temp; i < right; i++)
+                {
+                    if (postorder[temp] < postorder[right]) return false;
+                }
+                //分别验证左子树与右子树
+                return helper(0, mid - 1) && helper(mid, right - 1);
+            }
+
+        }
         //653. 两数之和 IV - 输入 BST
         public bool FindTarget(TreeNode root, int k)
         {
@@ -135,9 +273,7 @@ namespace Tree
                 traversal(node.right, resList);
             }
         }
-
-        
-
+        #endregion
 
     }
 
@@ -155,6 +291,106 @@ namespace Tree
 
     //    }
     //}
+
+    class Knowleage
+    {
+        //先序遍历   根节点-左节点-右节点
+        public void PreOrder(TreeNode root)
+        {
+
+            var list = new List<int>();
+            if (root == null) return;
+            //递归
+            preOrder(root);
+            void preOrder(TreeNode node)
+            {
+                if (node == null) return;
+                list.Add(root.val);
+                PreOrder(root.left);
+                PreOrder(root.right);
+            }
+
+            //栈实现
+            var stack = new Stack<int>();
+            stack.Push(root.val);
+            while (stack.Any())
+            {
+                list.Add(stack.Pop());
+                //先右再左，利用栈的后进先出
+                if (root.right != null)
+                    stack.Push(root.right.val);
+                if (root.left != null)
+                    stack.Push(root.left.val);
+            }
+        }
+        //中序遍历  左节点-根节点-右节点
+        public void InOrder(TreeNode root)
+        {
+
+            var list = new List<int>();
+            if (root == null) return;
+            //递归
+            inOrder(root);
+            void inOrder(TreeNode node)
+            {
+                if (node == null) return;
+                PreOrder(root.left);
+                list.Add(root.val);
+                PreOrder(root.right);
+            }
+
+            //栈实现
+            var stack = new Stack<int>();
+            while (stack.Any() || root != null)
+            {
+                //先将所有左节点入栈
+                if (root != null)
+                {
+                    stack.Push(root.val);
+                    root = root.left;
+                } 
+                else
+                {
+                    int temp = stack.Pop();
+                    list.Add(temp);
+                    root = root.right;
+                }
+            }
+        }
+        //后序遍历  左节点-右节点-根节点
+        public void BackOrder(TreeNode root)
+        {
+            var list = new List<int>();
+            if (root == null) return;
+            //递归
+            inOrder(root);
+            void inOrder(TreeNode node)
+            {
+                if (node == null) return;
+                PreOrder(root.left);
+                list.Add(root.val);
+                PreOrder(root.right);
+            }
+
+            //栈实现
+            var stack = new Stack<int>();
+            var help = new Stack<int>();
+            stack.Push(root.val);
+            while (stack.Any())
+            {
+                int temp = stack.Pop();
+                help.Push(temp);
+                //先左再右，利用栈的后进先出
+                //根-右-左
+                //辅助栈 -- 左-右-跟
+                if (root.left != null)
+                    stack.Push(root.left.val);
+                if (root.right != null)
+                    stack.Push(root.right.val);
+            }
+            while (help.Any()) list.Add(help.Pop());
+        }
+    }
 
     class TreeNode
     {

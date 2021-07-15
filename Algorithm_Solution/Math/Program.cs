@@ -15,16 +15,41 @@ namespace Math
             empty.GetHashCode();
             //实例化可以访问类成员;带有static的可以直接访问
             Common.Case testCase = new Common.Case();
+            int n1 = 1, n2 = 2;
+            int n3 = 3;
+            n3 = n1 & n2;
             //Console.WriteLine(problems.RestoreString(testCase.s, testCase.index));
             char[] res = new char[] { 'h', 'e', 'l', 'l', 'o' };
             int[] res1 = new int[] { 1, 3 };
-            int[] res2 = new int[] { 1, 0, 1, 0, 1 };
-            //problems.NumSubarraysWithSum(res2, 2);
+            int[] res2 = new int[] { 1, 2, 5, 2 };
+            problems.NthUglyNumber(10);
             Console.ReadKey();
         }
     }
     class Problems
     {
+        public int NthUglyNumber(int n)
+        {
+            //一个数m是另一个数n的因子，是指n能被m整除
+            //一个大丑数可以由小丑数*2/3/5 得到
+            //三指针
+            //第一个丑数乘以2后大于M的结果记为M2。
+            //同样，我们把已有的每一个一个丑数乘以3和5，
+            //能得到第一个大于M的结果M3和M5。那么下一个丑数应该是M2、M3和M5这3个数的最小者。
+            if (n <= 0) return 0;
+            int[] dp = new int[n];
+            dp[0] = 1;
+            int a = 0, b = 0, c = 0;
+            for (int i = 1; i < n; i++)
+            {
+                int a2 = dp[a] * 2, b2 = dp[b] * 3, c2 = dp[c] * 5;
+                dp[i] = System.Math.Min(System.Math.Min(a2,b2),c2 );
+                if (dp[i] == a2) a++;
+                if (dp[i] == b2) b++;
+                if (dp[i] == c2) c++;
+            }
+            return dp[n - 1];
+        }
         //移动零
         public void MoveZeroes(int[] nums)
         {
@@ -479,6 +504,26 @@ namespace Math
                 res[i] = res[i >> 1] + (i & 1);
             }
             return res;
+        }
+
+        //剑指 Offer 56 - I. 数组中数字出现的次数
+        public int[] SingleNumbers(int[] nums)
+        {
+            int len = nums.Length;
+            if (len == 0) return new int[2];
+            int sum = 0;
+            //先获得所有数异或的结果
+            //x^0=x;x^x=0;
+            foreach (var num in nums) sum ^= num;
+            //怎么获得异或之前的两个数
+            //得到最低位的1
+            int lowbit = sum & (-sum);
+            int x = 0;
+            foreach (var num in nums)
+            {
+                if ((lowbit & num) != 0) x ^= num;
+            }
+            return new int[] { x, x ^ sum };
         }
         #endregion 
 

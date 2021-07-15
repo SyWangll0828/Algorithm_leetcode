@@ -15,13 +15,13 @@ namespace LinkedList
             //实例化可以访问类成员;直接访问需要添加static
             ListNode head = new ListNode(1)
             {
-                next = new ListNode(3)
+                next = new ListNode(2)
                 {
-                    next = new ListNode(2)
+                    next = new ListNode(3)
                 }
             };
             Common.Case testCase = new Common.Case();
-            problems.RemoveNthFromEnd(head, 2);
+            problems.ReverseList(head);
         }
     }
     class Problems
@@ -30,6 +30,44 @@ namespace LinkedList
         //方便对头节点的操作，创建哑节点dummy.next
         //cur = dummy, cur指向当前节点
         //cur = cur.next，进行链表遍历
+
+        //删除链表结点
+        //1、dummy.next = dummy.next.next;
+        //2、找到要删除结点的下一个结点，将下一个结点的值赋值给删除结点，下一个结点删除
+
+        //双指针概念（一个指针解决不了问题，可以考虑双指针，一个一次走一步，另一个走若干步）
+        //求链表的中间节点（一个一次走一步，另一个一次走两步，第一个结点走到末尾时，第一个结点的位置就是中间节点）
+        //判断是否环形链表（一个一次走一步，另一个一次走两步,在第一个走到末尾的时候第二个结点能否追上第一个结点）
+
+        //206. 反转链表
+        public ListNode ReverseList(ListNode head)
+        {
+            if (head == null) return null; 
+            ListNode preNode = null;
+            ListNode curNode = head;
+            //迭代
+            while (curNode!=null)
+            {
+                ListNode nextNode = curNode.next;
+                curNode.next = preNode;
+                preNode = curNode;
+                curNode = nextNode;
+            }
+            return preNode;
+
+            //递归 建议画图 从尾节点开始理解
+            if (head == null || head.next == null) return head;
+            //定义返回节点（及尾节点）
+            ListNode cur = ReverseList(head.next);
+            //head.next为尾节点，head为尾节点前驱节点
+            //2->3 变成  2<-3
+            head.next.next = head;
+            //前驱节点的next先置空
+            head.next = null;
+            return cur;
+
+
+        }
 
         //剑指 Offer 06. 从尾到头打印链表
         public int[] ReversePrint(ListNode head)

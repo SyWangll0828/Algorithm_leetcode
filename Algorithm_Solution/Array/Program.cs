@@ -15,25 +15,28 @@ namespace Array
             Knowledge knowledge = new Knowledge();
             //实例化可以访问类成员;直接访问需要添加static
             Common.Case testCase = new Common.Case();
-            int n = 10, m = 8;
-            int mid = n + (n - m) >> 1;
-            //problems.GetRow(5);
             //不等长交错数组
-            int[][] aInt = new int[2][];
+            char[][] aInt = new char[1][];
             //二维数组
-            aInt[0] = new int[] { 5 };
-            aInt[1] = new int[] { 6 };
+            aInt[0] = new char[] { 'a' };
+            //aInt[1] = new int[] { 6 };
             int[,] ab2 = new int[2, 1] { { 5 }, { 6 } };
-
-            //problems.SearchInsert(new int[] { -1, 1, 0, -3, 3 });
+            int[] test = new int[] { 2, 2, 7, 11, 15 };
+            //int32 最小值取反越界
+            //int n1 = int.MinValue;
+            int n = 2;
+            int n1 = 7;
+            int n2 = n ^ n1;
+            //problems.MaxSubArray(new int[] { -2, 1, -3, 4, -1, 2, 1, -5, 4 });
+            problems.FindContinuousSequence(9);
             //int[] testNums = knowledge.Reverse(testCase.nums);
             //Console.WriteLine(string.Join("", testNums.ToArray()));
             //problems.IntToRoman(testCase.MyProperty2);
             //Knowledge.Rank(3, testCase.index);
-            int[] test = new int[] { 15, 16, 19, 20, 25, 1, 3, 4, 5, 7, 10, 14 };
+
             //var rcptnos = new List<string>();
             //var n = problems.TwoSum2(new int[] { 2, 2, 7, 11, 15 }, 100);
-            //problems.MyPow(2, 4);
+            //problems.SpiralOrder(testCase.twoArrayThree);
             //problems.ContainsNearbyDuplicate(testCase.nums, 1);
             double a = 1.0 / 0.0;
             Console.ReadKey();
@@ -120,15 +123,6 @@ namespace Array
                 }
             }
             return res;
-        }
-
-        //435. 无重叠区间
-        public int EraseOverlapIntervals(int[][] intervals)
-        {
-            // 先按照区间起始位置排序
-            System.Array.Sort(intervals, (v1, v2) => v1[0] - v2[0]);
-
-            return 9;
         }
 
         //56. 合并区间
@@ -446,7 +440,139 @@ namespace Array
             }
             return max;
         }
+        public bool CheckInclusion(string s1, string s2)
+        {
+            //固定活动窗口的长度为s1的长度
+            int n = s1.Length, m = s2.Length;
+            if (n > m) return false;
+            //char[] s1Arr = new char[26];
+            ////记录s1的词频
+            //for (int i = 0; i < n; i++) s1Arr[s1[i] - 'a']++;
+            //char[] s2Arr = new char[26];
+            ////双指针同时右移 
+            //int left = 0, right = n - 1;
+            //for (int i = 0; i < right; i++) s2Arr[s2[i] - 'a']++;
+            //while (right < m)
+            //{
+            //    s2Arr[s2[right] - 'a']++;
+            //    if (check(s1Arr, s2Arr)) return true;
+            //    s2Arr[s2[left] - 'a']--;
+            //    //移动窗口
+            //    left++;
+            //    right++;
+            //}
+            //return false;
 
+            //双指针交替右移 模板
+            Dictionary<char, int> dict = new Dictionary<char, int>();
+            Dictionary<char, int> window = new Dictionary<char, int>();
+            //记录s1的词频
+            for (int i = 0; i < n; i++)
+            {
+                int val = 0;
+                dict.TryGetValue(s1[i], out val);
+                dict[s1[i]] = val + 1;
+            }
+            int left = 0, right = 0, valid = 0;
+            while (right < m)
+            {
+                char c = s2[right];
+                //右移窗口
+                right++;
+                // 进行窗口内数据的更新
+                if (dict.ContainsKey(c))
+                {
+                    int val = 0;
+                    window[c] = window.TryGetValue(c, out val) ? val + 1 : 1;
+                    if (window[c] == dict[c])
+                        valid++;
+                }
+                /*** debug 输出的位置 ***/
+                Console.WriteLine("window: [%d, %d)\n", left, right);
+                /********************/
+                // 判断左侧窗口是否要收缩
+                while (right - left >= n)
+                {
+                    // 在这里判断是否找到了合法的子串
+                    if (valid == dict.Count)
+                        return true;
+                    char d = s2[left];
+                    left++;
+                    // 进行窗口内数据的更新
+                    if (dict.ContainsKey(d))
+                    {
+                        if (window[d] == dict[d])
+                            valid--;
+                        window[d]--;
+                    }
+                }
+            }
+            return false;
+
+            bool check(char[] arr1, char[] arr2)
+            {
+                for (int i = 0; i < 26; i++)
+                {
+                    if (arr1[i] != arr2[i]) return false;
+                }
+                return true;
+            }
+        }
+        //剑指 Offer 57 - II. 和为s的连续正数序列
+        public int[][] FindContinuousSequence(int target)
+        {
+            //if (target < 3) return new int[0][];
+            ////滑动窗口
+            //int left = 0, right = 1;
+            //int[] temp = new int[target];
+
+            //List<int[]> res = new List<int[]>();
+            //for (int i = 0; i < target; i++) temp[i] = i + 1;
+            //while (left < right && right <= (target + 1) / 2)
+            //{
+            //    int sum = 0;
+            //    for (int i = left; i <= right; i++) sum += temp[i];
+            //    if (sum < target) right++;
+            //    else if (sum > target) left++;
+            //    else
+            //    {
+            //        int len = right - left + 1;
+            //        int[] t = new int[len];
+            //        for (int i = left, j = 0; i <= right && j < len; i++)
+            //        {
+            //            t[j++] = temp[i];
+            //        }
+            //        res.Add(t);
+            //        right++;
+            //    }
+            //}
+            //return res.ToArray();
+
+            //可以直接用数字来写
+            int i = 1, j = 2, s = 3;
+            List<int[]> res = new List<int[]>();
+            while (i < j)
+            {
+                if (s == target)
+                {
+                    int[] ans = new int[j - i + 1];
+                    for (int k = i; k <= j; k++)
+                        ans[k - i] = k;
+                    res.Add(ans);
+                }
+                if (s >= target)
+                {
+                    s -= i;
+                    i++;
+                }
+                else
+                {
+                    j++;
+                    s += j;
+                }
+            }
+            return res.ToArray();
+        }
         #endregion
 
         #region 动态规划
@@ -456,11 +582,106 @@ namespace Array
         //4、确定遍历顺序
         //5、举例推导dp数组
 
-        //10. 正则表达式匹配
-        //public bool IsMatch(string s, string p)
-        //{
+        //剑指 Offer 10- I. 斐波那契数列
+        int[] cache = new int[101];
+        public int FibTwo(int n)
+        {
+            //动态规划 从下往上计算
+            int a = 0, b = 1, sum;
+            for (int i = 0; i < n; i++)
+            {
+                sum = (a + b) % 1000000007;
+                a = b;
+                b = sum;
+            }
+            return a;
+            //递归超时
+            //记忆化递归
+            //if (n < 2) return n;
+            //if (cache[n] == 0)
+            //    cache[n] = (Fib(n - 1) + Fib(n - 2)) % 1000000007;
+            //return cache[n];
+        }
+        //剑指 Offer 10- II. 青蛙跳台阶问题
+        public int NumWays(int n)
+        {
+            //分析过后 依然是斐波那契数列问题
+            int[] res = { 1, 1, 2 };
+            if (n < 3) return res[n];
+            int a = 1, b = 2, sum = 0;
+            for (int i = 3; i <= n; i++)
+            {
+                sum = (a + b) % 1000000007;
+                a = b;
+                b = sum;
+            }
+            return sum;
+        }
 
-        //}
+        //
+        public int MinCostClimbingStairs(int[] cost)
+        {
+            int len = cost.Length;
+            //dp表示下标为i结尾的花费值
+            int[] dp = new int[len + 1];
+            dp[0] = 0;
+            dp[1] = 0;
+            //递推公式
+            //dp[i] = Math.Min(dp[i - 2] + cost[i - 2], dp[i - 1] + cost[i - 1]);
+            for (int i = 2; i <= len; i++)
+            {
+                dp[i] = Math.Min(dp[i - 2] + cost[i - 2], dp[i - 1] + cost[i - 1]);
+            }
+            return dp[len];
+        }
+
+        //53. 最大子序和
+        public int MaxSubArray(int[] nums)
+        {
+            int len = nums.Length;
+            //dp数组表示下标为i结尾的最大子序和
+            int[] dp = new int[len];
+            int res = nums[0];
+            dp[0] = nums[0];
+            //递推公式（状态方程）
+            //dp[i] = Math.Max(dp[i - 1] + nums[i], nums[i]);
+            for (int i = 1; i < len; i++)
+            {
+                dp[i] = Math.Max(dp[i - 1] + nums[i], nums[i]);
+                //与res进行比较
+                res = Math.Max(dp[i], res);
+            }
+            return res;
+        }
+
+        //152. 乘积最大子数组
+        public int MaxProduct(int[] nums)
+        {
+            int len = nums.Length;
+            if (len < 1) return 0;
+            //dp表示下标为i结尾的最大乘积
+            int[] dpMax = new int[len];
+            //dp1表示下标为i结尾的最小值
+            int[] dpMin = new int[len];
+            dpMax[0] = nums[0];
+            dpMin[0] = nums[0];
+            //递推公式
+            for (int i = 1; i < len; i++)
+            {
+                if (nums[i] >= 0)
+                {
+                    dpMax[i] = Math.Max(nums[i], nums[i] * dpMax[i - 1]);
+                    dpMin[i] = Math.Min(nums[i], nums[i] * dpMin[i - 1]);
+                }
+                else
+                {
+                    //有负数时最大值最小值反转
+                    dpMax[i] = Math.Max(nums[i], nums[i] * dpMin[i - 1]);
+                    dpMin[i] = Math.Min(nums[i], nums[i] * dpMax[i - 1]);
+                }
+            }
+            return dpMax.Max();
+        }
 
         //55. 跳跃游戏
         public bool CanJump(int[] nums)
@@ -476,6 +697,7 @@ namespace Array
             }
             return false;
         }
+
         //public int Jump(int[] nums)
         //{
         //}
@@ -588,18 +810,6 @@ namespace Array
         //    return result.ToArray();
         //}
 
-        //53. 最大子序和
-        public int MaxSubArray(int[] nums)
-        {
-            int pre = 0;
-            int sum = nums[0];
-            foreach (var num in nums)
-            {
-                pre = Math.Max(pre + num, num);
-                sum = Math.Max(sum, pre);
-            }
-            return sum;
-        }
         //62. 不同路径  杨辉三角问题
         public int UniquePaths(int m, int n)
         {
@@ -743,44 +953,181 @@ namespace Array
             }
             return x;
         }
-        //剑指 Offer 10- I. 斐波那契数列
-        int[] cache = new int[101];
-        public int FibTwo(int n)
+        #endregion
+
+        #region 回溯
+        //回溯思想
+        //深度优先遍历，遍历枚举所有情况（遇到重复得情况进行剪枝）
+        //46. 全排列   回溯基础模板
+        public IList<IList<int>> Permute(int[] nums)
         {
-            //动态规划 从下往上计算
-            int a = 0, b = 1, sum;
-            for (int i = 0; i < n; i++)
+            //排列无需去重
+            int len = nums.Length;
+            //存放符合条件结果的集合
+            List<IList<int>> res = new List<IList<int>>();
+            if (len == 0) return res;
+            //存放每次查找的结果
+            var path = new List<int>();
+            //定义元素是否已经访问过
+            bool[] used = new bool[len];
+            backTrack(0);
+            return res;
+
+            void backTrack(int depth)
             {
-                sum = (a + b) % 1000000007;
-                a = b;
-                b = sum;
+                //找到了一组满足条件的数组，添加到结果集合中
+                if (depth == len)
+                {
+                    res.Add(new List<int>(path));
+                    return;
+                }
+                for (int i = 0; i < len; i++)
+                {
+                    //剪枝，不访问已经访问过的
+                    if (used[i]) continue;
+                    path.Add(nums[i]);
+                    //标记已经遍历过
+                    used[i] = true;
+                    //回溯 
+                    backTrack(depth + 1);
+                    //状态重置
+                    used[i] = false;
+                    path.RemoveAt(path.Count - 1);
+                }
             }
-            return a;
-            //递归超时
-            //记忆化递归
-            //if (n < 2) return n;
-            //if (cache[n] == 0)
-            //    cache[n] = (Fib(n - 1) + Fib(n - 2)) % 1000000007;
-            //return cache[n];
         }
-        //剑指 Offer 10- II. 青蛙跳台阶问题
-        public int NumWays(int n)
+        //47. 全排列 II  含有重复元素 需要在回溯递归前先排序
+        public IList<IList<int>> PermuteUnique(int[] nums)
         {
-            //分析过后 依然是斐波那契数列问题
-            int[] res = { 1, 1, 2 };
-            if (n < 3) return res[n];
-            int a = 1, b = 2, sum = 0;
-            for (int i = 3; i <= n; i++)
+            //在条件结果的集合中存在重复元素
+            int len = nums.Length;
+            //存放符合条件结果的集合
+            List<IList<int>> res = new List<IList<int>>();
+            if (len == 0) return res;
+
+            // 排序（升序或者降序都可以），排序是剪枝的前提
+            System.Array.Sort(nums);
+
+            //存放每次查找的结果
+            var path = new List<int>();
+            //定义元素是否已经访问过
+            bool[] used = new bool[len];
+            backTrack(0);
+            return res;
+
+            void backTrack(int depth)
             {
-                sum = (a + b) % 1000000007;
-                a = b;
-                b = sum;
+                //找到了一组满足条件的数组，添加到结果集合中
+                if (path.Count == nums.Length)
+                {
+                    res.Add(new List<int>(path));
+                    return;
+                }
+                for (int i = 0; i < len; i++)
+                {
+                    //剪枝，不访问已经访问过的
+                    if (used[i]) continue;
+                    //剪枝，结果集合重复
+                    if (i > 0 && nums[i] == nums[i - 1] && !used[i - 1]) continue;
+                    path.Add(nums[i]);
+                    //标记已经遍历过
+                    used[i] = true;
+                    //回溯 
+                    backTrack(depth + 1);
+                    //状态重置
+                    used[i] = false;
+                    path.RemoveAt(path.Count - 1);
+                }
             }
-            return sum;
+        }
+        //剑指 Offer 38. 字符串的排列
+        public string[] Permutation(string s)
+        {
+            int len = s.Length;
+            if (len == 0) return new string[] { };
+
+            char[] array = s.ToArray();
+            // 排序（升序或者降序都可以），排序是剪枝的前提
+            System.Array.Sort(array);
+
+            //存放每次查找的结果
+            var path = new List<string>();
+            StringBuilder param = new StringBuilder();
+
+            //定义元素是否已经访问过
+            bool[] used = new bool[len];
+            backTrack(0);
+            //存放符合条件结果的集合
+            string[] res = new string[path.Count];
+            int index = 0;
+            //将列表结果转换成数组
+            foreach (var str in path) res[index++] = str;
+            return res;
+
+            void backTrack(int depth)
+            {
+                //找到了一组满足条件的数组，添加到结果集合中
+                if (depth == len)
+                {
+                    path.Add(param.ToString());
+                    return;
+                }
+                for (int i = 0; i < len; i++)
+                {
+                    //剪枝，不访问已经访问过的
+                    if (used[i]) continue;
+                    //剪枝，结果集合重复
+                    if (i > 0 && array[i] == array[i - 1] && !used[i - 1]) continue;
+                    //标记已经遍历过
+                    used[i] = true;
+                    param.Append(array[i]);
+                    //回溯 
+                    backTrack(depth + 1);
+                    //状态重置
+                    param.Length--;
+                    used[i] = false;
+                }
+            }
+        }
+
+        public bool Exist(char[][] board, string word)
+        {
+            //深度优先搜索+回溯
+            //特殊情况
+            if (word == null || board.Length == 0 || board[0].Length == 0) return false;
+            int count = board.Length;
+            int len = board[0].Length;
+            bool[,] visited = new bool[count, len];
+            char[] ans = word.ToArray();
+            for (int i = 0; i < count; i++)
+            {
+                for (int j = 0; j < len; j++)
+                {
+                    if (dfs(i, j, 0))
+                        return true;
+                }
+            }
+            return false;
+
+            bool dfs(int i, int j, int start)
+            {
+                if (i < 0 || i >= count || j < 0 || j >= len || ans[start] != board[i][j] || visited[i, j])
+                    return false;
+                //找到了满足条件的字符串
+                if (start == ans.Length - 1) return true;
+                visited[i, j] = true;
+                bool res = false;
+                res = dfs(i + 1, j, start + 1)
+                    || dfs(i - 1, j, start + 1)
+                    || dfs(i, j + 1, start + 1)
+                    || dfs(i, j - 1, start + 1);
+                visited[i, j] = false;
+                return res;
+            }
         }
         #endregion
 
-        #region 贪心
+        #region 贪心 没有固定的模板
         //可以购买
         public int MaxIceCream(int[] costs, int coins)
         {
@@ -932,32 +1279,24 @@ namespace Array
             }
             return n < 0 ? 1 / res : res;
 
-            long N = n;
-            return N >= 0 ? quickMul(x, N) : 1.0 / quickMul(x, -N);
-            //x→x^2→x^4→x^9→x^19→x^38→x^77
-            //n为奇数需再乘一个x 
-            //递归
-            double quickMul(double xTemp, long NTemp)
-            {
-                if (NTemp == 0) return 1.0;
-                double y = quickMul(xTemp, NTemp >> 1);
-                return NTemp % 2 == 0 ? y * y : y * y * xTemp;
-            }
-            //迭代
-            double quickMul2(double xTemp, long NTemp)
-            {
-                double res1 = 1;
-                double xMul = xTemp;
-                while (NTemp > 0)
-                {
-                    if (NTemp % 2 == 1) res *= xMul;
-                    xMul *= xMul;
-                    NTemp >>= 1;
-                }
-                return res1;
-            }
+            //防止越界，用long类型接收
+            //long tempN = n;
+            //if (tempN < 0)
+            //{
+            //    tempN = -tempN;
+            //    x = 1 / x;
+            //}
+            //double res = 1.0;
+            //while (tempN > 0)
+            //{
+            //    //奇数，乘以一个x
+            //    if ((tempN & 1) == 1) res *= x;
+            //    x *= x;
+            //    tempN >>= 1;
+            //}
+            //return res;
         }
-        #endregion 
+        #endregion
 
 
     }

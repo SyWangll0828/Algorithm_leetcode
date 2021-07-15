@@ -83,7 +83,7 @@ namespace Common
         {
 
         }
-
+        //使用静态初始化语句
         private static readonly object syncObj = new object();
         private static MyClass1 myClass = null;
         private static MyClass1 MyClass
@@ -97,6 +97,10 @@ namespace Common
                 }
                 return myClass;
             }
+        }
+        static MyClass1()
+        {
+             
         }
     }
 }
