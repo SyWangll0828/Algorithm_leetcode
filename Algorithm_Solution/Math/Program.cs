@@ -22,7 +22,7 @@ namespace Math
             char[] res = new char[] { 'h', 'e', 'l', 'l', 'o' };
             int[] res1 = new int[] { 1, 3 };
             int[] res2 = new int[] { 1, 2, 5, 2 };
-            problems.NthUglyNumber(10);
+            problems.HammingWeight(00000000000000000000000000001011);
             Console.ReadKey();
         }
     }
@@ -43,7 +43,7 @@ namespace Math
             for (int i = 1; i < n; i++)
             {
                 int a2 = dp[a] * 2, b2 = dp[b] * 3, c2 = dp[c] * 5;
-                dp[i] = System.Math.Min(System.Math.Min(a2,b2),c2 );
+                dp[i] = System.Math.Min(System.Math.Min(a2, b2), c2);
                 if (dp[i] == a2) a++;
                 if (dp[i] == b2) b++;
                 if (dp[i] == c2) c++;
@@ -324,10 +324,11 @@ namespace Math
         //1、与（&）
         //1&1=1 其余都为0 --> (x % 2 == 1) 二进制最右一位为1
         //x & (x - 1) --> 把x最低位的二进制1给去掉 0&1=0
-        //x & -x --> 得到最低位的1  
+        //x & (-x+1) --> 得到最低位的1  
         //x & ~x --> 0
         //2、或（|）
-        //3、异或（^）
+        //3、异或（^）  可表示无进位相加
+        //1^1=0  不同为1，相同为0
         //x ^ 0 = x, x ^ x = 0    a ^ b = c, a ^ c = b, b ^ c = a
         //4、左移（<<）
         //5、右移（>>） -->  x >> 2 = x / 4 右移2位
@@ -338,6 +339,11 @@ namespace Math
         //大写变小写、小写变小写：字符 |= 32
         //大写变大写、小写变大写：字符 &= -33 
         //如果 n 是正整数并且 n & (n - 1) = 0 或者 n & (-n) = n，那么 n 就是 2 的幂。
+
+        //public uint reverseBits(uint n)
+        //{
+
+        //}
 
         public int FindDuplicate(int[] nums)
         {
@@ -352,11 +358,28 @@ namespace Math
             }
             return -1;
         }
+        //剑指 Offer 65. 位运算做加法
+        public int Add(int a, int b)
+        {
+            //模拟二进制位相加得
+            //进位 carry=(a&b)<<1
+            //不考虑进位 sum=a^b
+            int sum = a ^ b;
+            int carry = (a & b) << 1;
+            while (carry != 0)
+            {
+                a = sum;
+                b = carry;
+                sum = a ^ b;
+                carry = (a & b) << 1;
+            }
+            return sum;
+        }
 
         //231. 2 的幂
         public bool IsPowerOfTwo(int n)
         {
-            return n > 1 && (n & (n - 1)) == 0;
+            return n >= 1 && (n & (n - 1)) == 0;
         }
         //剑指 Offer 56 - II. 数组中数字出现的次数 II
         public int SingleNumber(int[] nums)

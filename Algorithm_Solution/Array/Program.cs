@@ -28,13 +28,13 @@ namespace Array
             int n1 = 7;
             int n2 = n ^ n1;
             //problems.MaxSubArray(new int[] { -2, 1, -3, 4, -1, 2, 1, -5, 4 });
-            problems.FindContinuousSequence(9);
+            problems.TranslateNum(1225);
             //int[] testNums = knowledge.Reverse(testCase.nums);
             //Console.WriteLine(string.Join("", testNums.ToArray()));
             //problems.IntToRoman(testCase.MyProperty2);
             //Knowledge.Rank(3, testCase.index);
 
-            //var rcptnos = new List<string>();
+            var rcptnos = new List<string>();
             //var n = problems.TwoSum2(new int[] { 2, 2, 7, 11, 15 }, 100);
             //problems.SpiralOrder(testCase.twoArrayThree);
             //problems.ContainsNearbyDuplicate(testCase.nums, 1);
@@ -577,10 +577,10 @@ namespace Array
 
         #region 动态规划
         //1、确定dp数组（dp table）以及下标的含义
-        //2、确定递推公式
+        //2、确定状态转移方程
         //3、dp数组如何初始化
         //4、确定遍历顺序
-        //5、举例推导dp数组
+        //5、返回值
 
         //剑指 Offer 10- I. 斐波那契数列
         int[] cache = new int[101];
@@ -785,30 +785,34 @@ namespace Array
             return dp[dp.Length - 1];
         }
 
-        //public IList<IList<string>> DisplayTable(IList<IList<string>> orders)
-        //{
-        //    var order = orders.Select(o => new { tableNumber, foodItem }).OrderBy(o => int.Parse(o.tableNumber)).GroupBy(o => (o.tableNumber, o.foodItem), (item, result) => new { item.tableNumber, item.foodItem, foodItemNumber = result.Count() });
-        //    List<string> title = order.GroupBy(o => o.foodItem, (item) => new { item.foodItem }).OrderBy(o => o.Key, StringComparer.Ordinal).Select(o => o.Key).ToList();
-        //    title.Insert(0, "Table");
-        //    List<List<string>> result = new List<List<string>> { title };
-
-        //    foreach (var o in order)
-        //    {
-        //        List<string> r;
-        //        r = result.FirstOrDefault(m => m[0].Equals(o.tableNumber));
-        //        if (r == null)
-        //        {
-        //            r = new List<string>(title.Select(t => "0"))
-        //            {
-        //                [0] = o.tableNumber
-        //            };
-        //            result.Add(r);
-        //        }
-        //        r[title.IndexOf(o.foodItem)] = o.foodItemNumber.ToString();
-        //    }
-
-        //    return result.ToArray();
-        //}
+        //剑指 Offer 46. 把数字翻译成字符串
+        public int TranslateNum(int num)
+        {
+            //怎么想到动态规划？？
+            //dp[]数组及下标表示的含义是什么？
+            //状态定义方程
+            string s = num.ToString();
+            int len = s.Length;
+            if (len == 1) return 1;
+            char[] arr = s.ToArray();
+            //dp数组下标表示下标结尾的前缀字符的翻译数
+            int[] dp = new int[len];
+            //初始化
+            dp[0] = 1;
+            for (int i = 1; i < len; i++)
+            {
+                dp[i] = dp[i - 1];
+                int currentNum = 10 * (arr[i - 1] - '0') + (arr[i] - '0');
+                //递推公式
+                if (currentNum > 9 && currentNum < 26)
+                {
+                    //i=1 两个
+                    if (i - 2 < 0) dp[i]++;
+                    else dp[i] = dp[i - 1] + dp[i - 2];
+                }
+            }
+            return dp[len - 1];
+        }
 
         //62. 不同路径  杨辉三角问题
         public int UniquePaths(int m, int n)

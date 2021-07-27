@@ -13,15 +13,8 @@ namespace LinkedList
         {
             Problems problems = new Problems();
             //实例化可以访问类成员;直接访问需要添加static
-            ListNode head = new ListNode(1)
-            {
-                next = new ListNode(2)
-                {
-                    next = new ListNode(3)
-                }
-            };
             Common.Case testCase = new Common.Case();
-            problems.ReverseList(head);
+            //problems.copyRandomList(head);
         }
     }
     class Problems
@@ -42,11 +35,11 @@ namespace LinkedList
         //206. 反转链表
         public ListNode ReverseList(ListNode head)
         {
-            if (head == null) return null; 
+            if (head == null) return null;
             ListNode preNode = null;
             ListNode curNode = head;
             //迭代
-            while (curNode!=null)
+            while (curNode != null)
             {
                 ListNode nextNode = curNode.next;
                 curNode.next = preNode;
@@ -235,14 +228,169 @@ namespace LinkedList
 
     }
 
+    class Knowleage
+    {
+        // 获取两个链表的相交节点
+        // 处理环形链表
+        public static ListNode GetIntersectNode(ListNode node1, ListNode node2)
+        {
+            if (node1 == null || node2 == null)
+            {
+                return null;
+            }
+            ListNode loop1 = GetLoopNode(node1);
+            ListNode loop2 = GetLoopNode(node2);
+            // 两个链表皆无环
+            if (loop1 == null && loop2 == null)
+            {
+                return NoLoop(loop1, loop2);
+            }
+            // 两个链表皆有环
+            if (loop1 != null && loop2 != null)
+            {
+                return BothLoop(node1, node2, loop1, loop2);
+            }
+            // loop其中一个为null，另一个不为null，则两个链表一定不相交
+            return null;
+        }
+
+        // 两个无环链表，返回第一个相交节点，如果不相交，返回null
+        private static ListNode NoLoop(ListNode node1, ListNode node2)
+        {
+            if (node1 == null || node2 == null)
+            {
+                return null;
+            }
+            // 两个链表分别走一遍
+            ListNode cur1 = node1;
+            ListNode cur2 = node2;
+            // 记录长度差值
+            int n = 0;
+            while (cur1.next != null)
+            {
+                cur1 = cur1.next;
+                n++;
+            }
+            while (cur2.next != null)
+            {
+                cur2 = cur2.next;
+                n--;
+            }
+            // 两个链表没有交点
+            if (cur1 != cur2)
+            {
+                return null;
+            }
+            // 重新定义初始节点
+            cur1 = n > 0 ? node1 : node2;
+            cur2 = cur1 == node1 ? node2 : node1;
+            n = Math.Abs(n);
+            // 长的链表先走一段距离
+            while (n != 0)
+            {
+                cur1 = cur1.next;
+                n--;
+            }
+            while (cur1 != cur2)
+            {
+                cur1 = cur1.next;
+                cur2 = cur2.next;
+            }
+            return cur1;
+        }
+        // 两个有环链表
+        private static ListNode BothLoop(ListNode node1, ListNode node2, ListNode loop1, ListNode loop2)
+        {
+            ListNode cur1 = null;
+            ListNode cur2 = null;
+            if (loop1 == loop2)
+            {
+                cur1 = node1;
+                cur2 = node2;
+                int n = 0;
+                while (cur1 != loop1)
+                {
+                    cur1 = cur1.next;
+                    n++;
+                }
+                while (cur2 != loop2)
+                {
+                    cur2 = cur2.next;
+                    n--;
+                }
+                // 重新定义初始节点
+                cur1 = n > 0 ? node1 : node2;
+                cur2 = cur1 == node1 ? node2 : node1;
+                n = Math.Abs(n);
+                // 长的链表先走一段距离
+                while (n != 0)
+                {
+                    cur1 = cur1.next;
+                    n--;
+                }
+                while (cur1 != cur2)
+                {
+                    cur1 = cur1.next;
+                    cur2 = cur2.next;
+                }
+                return cur1;
+            }
+            else
+            {
+                cur1 = loop1.next;
+                while (cur1 != loop1)
+                {
+                    if (cur1 == loop2)
+                    {
+                        return loop1;
+                    }
+                    cur1 = cur1.next;
+                }
+                return null;
+            }
+        }
+        // 快慢指针，套路方法
+        // 找到链表第一个入环节点，如果无环，返回null
+        public static ListNode GetLoopNode(ListNode node)
+        {
+            if (node == null || node.next == null || node.next.next == null)
+            {
+                return null;
+            }
+            // 快慢节点
+            ListNode n1 = node.next;
+            ListNode n2 = node.next.next;
+            // 当快节点与慢节点第一次相遇时，让快节点从头开始
+            // 两节点第二次相遇时就是时第一个入环节点
+            while (n1 != n2)
+            {
+                if (n2.next == null || n2.next.next == null)
+                {
+                    return null;
+                }
+                n1 = n1.next;
+                n2 = n2.next.next;
+            }
+            n2 = node;
+            while (n1 != n2)
+            {
+                n1 = n1.next;
+                n2 = n2.next;
+            }
+            return n1;
+        }
+    }
+
     class ListNode
     {
         public int val;
         public ListNode next;
-        public ListNode(int val = 0, ListNode next = null)
+        public ListNode random;
+        public ListNode(int val = 0, ListNode next = null, ListNode random = null)
         {
             this.val = val;
             this.next = next;
+            this.random = random;
         }
     }
 }
