@@ -1340,15 +1340,35 @@ namespace Array
         //判断字符串是否是回文
         public static bool isPlindRome(string s)
         {
-            int n = s.Length;
-            for (int i = 0; i < n / 2; i++)
+            if (s == null || s.Length == 0)
             {
-                if (s[i] != s[n - i - 1])
-                    return false;
+                return true;
             }
-            foreach (var c in s)
+            int left = 0;
+            int right = s.Length - 1;
+            while (left < right)
             {
-
+                // 收缩左右边界，知道遇到数字或者字母
+                //while (left < right && !char.IsLetterOrDigit(s[left]))
+                //{
+                //    left++;
+                //}
+                //while (left < right && !char.IsLetterOrDigit(s[right]))
+                //{
+                //    right--;
+                //}
+                if (left < right)
+                {
+                    if (char.ToLower(s[left]) != char.ToLower(s[right]))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        left++;
+                        right--;
+                    }
+                }
             }
             return true;
         }

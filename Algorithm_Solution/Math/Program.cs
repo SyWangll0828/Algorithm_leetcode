@@ -16,13 +16,12 @@ namespace Math
             //实例化可以访问类成员;带有static的可以直接访问
             Common.Case testCase = new Common.Case();
             int n1 = 1, n2 = 2;
-            int n3 = 3;
+            int n3 = 1 << 2;
             n3 = n1 & n2;
             //Console.WriteLine(problems.RestoreString(testCase.s, testCase.index));
             char[] res = new char[] { 'h', 'e', 'l', 'l', 'o' };
             int[] res1 = new int[] { 1, 3 };
             int[] res2 = new int[] { 1, 2, 5, 2 };
-            problems.HammingWeight(00000000000000000000000000001011);
             Console.ReadKey();
         }
     }

@@ -348,6 +348,13 @@ namespace Sort
                     }
                 }
             }
+
+            // 桶排序
+            public static void bucketSort(int[] paras)
+            {
+                int left = 0;
+                int right=paras
+            }
         }
         #endregion
     }

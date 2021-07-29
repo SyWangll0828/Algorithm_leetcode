@@ -16,6 +16,8 @@ namespace Common
         public int n = 3;
         public int[] traget = { 2, 3, 4 };
         public int[] nums = { 1, 0, 1, 1 };
+        public int[] nums3 = { 2, 4, 3 };
+        public int[] nums4 = { 5, 6, 4 };
         public int[] nums1 = { 7, 3, 3, 6, 6, 6, 10, 5, 9, 2 };
         public int[] nums2 = { 1, 2, 3, 4 };
         public string[] tokens = { "4", "13", "5", "/", "+" };
@@ -100,7 +102,7 @@ namespace Common
         }
         static MyClass1()
         {
-             
+
         }
     }
 }
