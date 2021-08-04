@@ -14,40 +14,123 @@ namespace LinkedList
             Problems problems = new Problems();
             //实例化可以访问类成员;直接访问需要添加static
             Common.Case testCase = new Common.Case();
-            int[] arr = { -3, 99 ,5};
+            int[] arr = { 1, 4, 3, 0, 5, 2 };
             int[] arr1 = testCase.nums4;
             ListNode node1 = Knowleage.CreateListNodes(arr);
             ListNode node2 = Knowleage.CreateListNodes(arr1);
+            problems.SortedListToBST(node1);
             //Knowleage.PrintListNodes(head);
-            ListNode sdasd = problems.DeleteNode(node1,-3);
             //Knowleage.PrintListNodes(resHead);
         }
     }
     class Problems
     {
-        public ListNode DeleteNode(ListNode head, int val)
+        public TreeNode SortedListToBST(ListNode head)
         {
             if (head == null)
             {
+                return null;
+            }
+            int len = 0;
+            ListNode cur = head;
+            while (cur != null)
+            {
+                len++;
+                cur = cur.next;
+            }
+            int[] nums = new int[len];
+            cur = head;
+            for (int i = 0; i < len; i++)
+            {
+                nums[i] = cur.val;
+                cur = cur.next;
+            }
+            return creatrBST(0, len - 1);
+
+            TreeNode creatrBST(int left, int right)
+            {
+                if (right > left)
+                {
+                    return null;
+                }
+                int mid = left + ((right - left) >> 1);
+                TreeNode node = new TreeNode(nums[mid]);
+                node.left = creatrBST(left, mid - 1);
+                node.right = creatrBST(mid + 1, right);
+                return node;
+            }
+        }
+        // 92. 反转链表 II
+        public ListNode ReverseBetween(ListNode head, int left, int right)
+        {
+            if (left == right || head == null)
+            {
                 return head;
             }
-            ListNode pre = new ListNode(0);
-            ListNode cur = head;
-            pre.next = head;
-            while (pre.next != null)
+            // 头插法
+            // 原地一趟遍历
+            ListNode dummy = new ListNode(0);
+            dummy.next = head;
+            ListNode pre = dummy;
+            for (int i = 1; i < left; i++)
             {
-                if (pre.next.val == val)
-                {
-                    pre.next = pre.next.next;
-                    break;
-                }
-                else
-                {
-                    pre = pre.next;
-                }
+                pre = pre.next;
             }
-            return pre.next;
+            ListNode cur = pre.next;
+            // pre,cur,next三个指针进行原地反转
+            for (int i = 0; i < right - left; i++)
+            {
+                ListNode next = cur.next;
+                cur.next = next.next;
+                next.next = pre.next;
+                pre.next = next;
+            }
+            return dummy.next;
+
+            //ListNode dummy = new ListNode(0);
+            //dummy.next = head;
+            //// 头结点可能发生变化，定义哑节点
+            //ListNode pre = dummy;
+            //// 先找到left位置的结点
+            //for (int i = 1; i < left; i++)
+            //{
+            //    pre = pre.next;
+            //}
+            //ListNode rightPre = pre;
+            //// 然后找到right位置的结点
+            //// 此时rightPre指向right结点
+            //for (int i = 1; i <= (right - left + 1); i++)
+            //{
+            //    rightPre = rightPre.next;
+            //}
+            //// 断开连接
+            //ListNode leftNode = pre.next;
+            //// 后继结点
+            //ListNode succ = rightPre.next;
+            //pre.next = null;
+            //rightPre.next = null;
+            //reverse(leftNode);
+            //// 重新连接
+            //leftNode.next = succ;
+            //pre.next = rightPre;
+            //return dummy.next;
+            //// 反转链表
+            //void reverse(ListNode node)
+            //{
+            //    ListNode preNode = null;
+            //    ListNode n = node;
+            //    while (n != null)
+            //    {
+            //        ListNode ne = n.next;
+            //        n.next = preNode;
+            //        preNode = n;
+            //        n = ne;
+            //    }
+            //}
+
+
         }
+
         // 链表两数相加
         public ListNode AddTwoNumbers(ListNode l1, ListNode l2)
         {
@@ -101,9 +184,8 @@ namespace LinkedList
             }
         }
 
-        //链表常用方式，固定下来的解题：
-        //cur = dummy, cur指向当前节点
-        //cur = cur.next，进行链表遍历
+        // 链表常用方式，固定下来的解题：
+        // head头结点要做操作的时候，通常定义一个dummy结点，其next结点指向头结点
 
         //删除链表结点
         //1、dummy.next = dummy.next.next;
@@ -113,72 +195,8 @@ namespace LinkedList
         //求链表的中间节点（一个一次走一步，另一个一次走两步，第一个结点走到末尾时，第一个结点的位置就是中间节点）
         //判断是否环形链表（一个一次走一步，另一个一次走两步,在第一个走到末尾的时候第二个结点能否追上第一个结点）
 
-        //83. 删除排序链表中的重复元素
-        public ListNode DeleteDuplicates(ListNode head)
-        {
-            if (head == null) return null;
-            ListNode dummy = new ListNode();
-            dummy = head;
-            while (dummy != null && dummy.next != null)
-            {
-                if (dummy.val == dummy.next.val)
-                    dummy.next = dummy.next.next;
-                else
-                    dummy = dummy.next;
-            }
-            //要注意返回的是经过遍历过后的头结点
-            return head;
-        }
-
-        //160. 相交链表
-        public ListNode GetIntersectionNode(ListNode headA, ListNode headB)
-        {
-            HashSet<ListNode> hash = new HashSet<ListNode>();
-            var curNode = headA;
-            while (curNode != null)
-            {
-                hash.Add(curNode);
-                curNode = curNode.next;
-            }
-            curNode = headB;
-            while (curNode != null)
-            {
-                if (!hash.Add(curNode))
-                    return curNode;
-                else
-                    curNode = curNode.next;
-            }
-            return null;
-        }
-
-
         #region 双指针
-        //876. 链表的中间结点
-        public ListNode MiddleNode(ListNode head)
-        {
-            //int n = 0, k = 0;
-            //var curNode = head;
-            ////两次遍历链表
-            //while (curNode != null)
-            //{
-            //    n++;
-            //    curNode = curNode.next;
-            //}
-            //curNode = head;
-            //while (k < n / 2)
-            //{
-            //    k++;
-            //    curNode = curNode.next;
-            //}
-            //return curNode;
-            ListNode fast = head, slow = head;
-            while (fast != null && fast.next != null)
-            {
-                slow = slow.next;
-                fast = fast.next.next;
-            }
-            return slow;
-        }
+
 
         //203. 移除链表元素
         public ListNode RemoveElements(ListNode head, int val)
@@ -250,10 +268,10 @@ namespace LinkedList
             ////迭代
             //while (curNode != null)
             //{
-            //    ListNode nextNode = curNode.next;
-            //    curNode.next = preNode;
-            //    preNode = curNode;
-            //    curNode = nextNode;
+            //ListNode nextNode = curNode.next;
+            //curNode.next = preNode;
+            //preNode = curNode;
+            //curNode = nextNode;
             //}
             //return preNode;
 
@@ -269,6 +287,68 @@ namespace LinkedList
                 ListNode next = cur.next;
                 cur.next = pre;
                 return helper(cur, next);
+            }
+        }
+
+        // 143. 重排链表
+        // 首先想到用栈来处理中点之后的结点插入，结果超时
+        // 中点之后的结点进行反转，然后合并两个链表
+        public void ReorderList(ListNode head)
+        {
+            if (head == null || head.next == null)
+            {
+                return;
+            }
+            ListNode mid = findMidNode(head);
+            ListNode l1 = head;
+            ListNode l2 = mid.next;
+            // 断开连接
+            mid.next = null;
+            reverse(l2);
+            // 合并两个链表
+            mergeTwoList(l1, l2);
+
+            ListNode findMidNode(ListNode head1)
+            {
+                ListNode slow = head, fast = head;
+                while (fast != null && fast.next != null)
+                {
+                    slow = slow.next;
+                    fast = fast.next.next;
+                }
+                return slow;
+            }
+
+            // p,cur,next 反转链表
+            void reverse(ListNode head2)
+            {
+                ListNode p = null;
+                ListNode cur = head2;
+                while (cur != null)
+                {
+                    ListNode n = cur.next;
+                    cur.next = p;
+                    p = cur;
+                    cur = n;
+                }
+                l2 = p;
+            }
+
+            // 合并两个链表（交叉合并）
+            void mergeTwoList(ListNode n1, ListNode n2)
+            {
+                ListNode temp1;
+                ListNode temp2;
+                while (n1 != null && n2 != null)
+                {
+                    temp1 = n1.next;
+                    temp2 = n2.next;
+                    n1.next = n2;
+                    n1 = temp1;
+                    // 交换插入
+                    n2.next = n1;
+                    n2 = temp2;
+                }
             }
         }
 
@@ -454,5 +534,20 @@ namespace LinkedList
             this.random = random;
         }
 
+    }
+
+    class TreeNode
+    {
+        public int val;
+        public TreeNode left;
+        public TreeNode right;
+        public TreeNode parent;
+        public TreeNode(int val = 0, TreeNode left = null, TreeNode right = null, TreeNode par = null)
+        {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+            this.parent = par;
+        }
     }
 }

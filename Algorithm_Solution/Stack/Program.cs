@@ -21,7 +21,8 @@ namespace Stack
             //problems.NextGreaterElement(testCase.nums1, testCase.nums2);
             //problems.NextGreaterElements(testCase.nums1);
             //problems.BuildArray(testCase.traget, testCase.n);
-            //problems.EvalRPN(testCase.tokens);
+            int[] res = new int[] { 3, 2, 4 };
+            bool isv = problems.IsValid("({})");
             Console.ReadKey();
         }
     }
@@ -42,9 +43,6 @@ namespace Stack
         new Tuple<string, int>("IV",4),
         new Tuple<string, int>("I",1),
         };
-
-        //344. 反转字符串
-        //反转字符串的时候可以只循环一半 i 与 len-i-1 交换
 
         //1711. 大餐计数
         public int CountPairs(int[] deliciousness)
@@ -311,28 +309,6 @@ namespace Stack
             return max;
         }
         #endregion
-
-        public static IList<string> TopKFrequent(string[] words, int k)
-        {
-            Dictionary<string, int> keyValues = new Dictionary<string, int>();
-            foreach (var word in words)
-            {
-                if (keyValues.ContainsKey(word))
-                    keyValues[word] += 1;
-                else
-                    keyValues.Add(word, 1);
-            }
-            List<string> res = new List<string>();
-            foreach (var item in keyValues)
-            {
-                res.Add(item.Key);
-            }
-            res.Sort((a, b) =>
-            {
-                return keyValues[b] - keyValues[a];
-            });
-            return res.GetRange(0, k);
-        }
 
         //394.  字符串解码
         public string DecodeString(string s)

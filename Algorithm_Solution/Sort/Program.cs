@@ -353,7 +353,7 @@ namespace Sort
             public static void bucketSort(int[] paras)
             {
                 int left = 0;
-                int right=paras
+                int right = paras.Length - 1;
             }
         }
         #endregion

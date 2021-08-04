@@ -16,23 +16,93 @@ namespace Tree
             int[] t1 = new int[] { 3, 9, 20, 15, 7 };
             int[] t2 = new int[] { 1, 3, 2, 6, 5 };
 
-            TreeNode root = new TreeNode(2)
+            TreeNode root = new TreeNode(1)
             {
-                left = new TreeNode(2),
-                right = new TreeNode(2)
-                //{
-                //    left = new TreeNode(15),
-                //    right = new TreeNode(7)
-                //}
+                left = new TreeNode(2)
+                {
+                    left = new TreeNode(4),
+                    right = new TreeNode(5)
+                },
+                right = new TreeNode(3)
+                {
+                    right = new TreeNode(7)
+                }
             };
-            Knowleage.IsValidBST(root);
-            problems.VerifyPostorder(t2);
+            Knowleage.IsComBT(root);
+            int[] arr1 = new int[] { 1, 2, 3, 4, 5, 0, 7 };
+            int[] arr2 = new int[] { 4, 5, 2, 6, 7, 3, 1 };
+            problems.Flatten(root);
             Console.ReadKey();
         }
     }
 
     class Problems
     {
+        public void Flatten(TreeNode root)
+        {
+            if (root == null)
+            {
+                return;
+            }
+            // 前序遍历根结点
+            // 对遍历生成的数组进行迭代生成对应的结点
+            List<int> list = new List<int>();
+            preOrder(root);
+            TreeNode node = new TreeNode();
+            for (int i = 1; i < list.Count; i++)
+            {
+                TreeNode pre = new TreeNode(list[i - 1]);
+                TreeNode cur = new TreeNode(list[i]);
+                pre.left = null;
+                pre.right = cur;
+            }
+
+            void preOrder(TreeNode head)
+            {
+                if (head == null)
+                {
+                    return;
+                }
+                list.Add(head.val);
+                preOrder(head.left);
+                preOrder(head.right);
+            }
+        }
+
+        public TreeNode ConstructFromPrePost(int[] preorder, int[] postorder)
+        {
+            int preLen = preorder.Length;
+            int postLen = postorder.Length;
+            if (preLen != postLen)
+            {
+                return null;
+            }
+            return bulidBT(0, preLen - 1, 0, postLen - 1);
+
+            TreeNode bulidBT(int preLeft, int preRight, int postLeft, int postRight)
+            {
+                // 递归终止条件
+                if (preLeft > preRight || postLeft > postRight)
+                {
+                    return null;
+                }
+                TreeNode head = new TreeNode(preorder[preLeft]);
+                if (preLeft == preRight)
+                {
+                    return head;
+                }
+                // 找到左子树和右子树分界点
+                int pivotIndex = postLeft;
+                while (postorder[pivotIndex] != preorder[preLeft + 1] && pivotIndex <= postRight)
+                {
+                    pivotIndex++;
+                }
+                int preL = pivotIndex - postLeft + preLeft + 1;
+                head.left = bulidBT(preLeft + 1, preL, postLeft, pivotIndex);
+                head.right = bulidBT(preL + 1, preRight, pivotIndex + 1, postRight - 1);
+                return head;
+            }
+        }
         //二叉树的层序遍历并输出
         public int[] LevelOrder(TreeNode root)
         {
@@ -54,35 +124,7 @@ namespace Tree
             }
             return list.ToArray();
         }
-        //二叉树层序遍历 每层循环个节点 可用与求二叉树的深度、数组输出二叉树等
-        public IList<IList<int>> LevelOrder2(TreeNode root)
-        {
-            List<IList<int>> list = new List<IList<int>>();
-            //特殊情况
-            if (root == null) return list;
-            //将根节点依次放到队列中去
-            Queue<TreeNode> q = new Queue<TreeNode>();
-            q.Enqueue(root);
-            int n = 1;
-            while (q.Any())
-            {
-                List<int> temp = new List<int>();
-                int count = q.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    TreeNode cur = q.Dequeue();
-                    temp.Add(cur.val);
-                    if (cur.left != null)
-                        q.Enqueue(cur.left);
-                    if (cur.right != null)
-                        q.Enqueue(cur.right);
-                }
-                if ((n & 1) == 0) temp.Reverse();
-                list.Add(temp);
-                n++;
-            }
-            return list;
-        }
+
         //剑指 Offer 34. 二叉树中和为某一值的路径
         public IList<IList<int>> PathSum(TreeNode root, int target)
         {
@@ -137,46 +179,6 @@ namespace Tree
             }
         }
 
-        //104. 二叉树的最大深度
-        public int MaxDepth(TreeNode root)
-        {
-            return root == null ? 0 : Math.Max(MaxDepth(root.left), MaxDepth(root.right)) + 1;
-        }
-
-        //前序/后序+中序序列可以唯一确定一棵二叉树
-        //对于任意一颗树而言
-        //前序遍历的形式：[根节点, [左子树的前序遍历结果], [右子树的前序遍历结果]]
-        //中序遍历的形式：[[左子树的中序遍历结果], 根节点, [右子树的中序遍历结果]]
-        //后序遍历的形式：[[右子树的中序遍历结果], 根节点, [左子树的中序遍历结果]]
-        public TreeNode BuildTree(int[] preorder, int[] inorder)
-        {
-            if (preorder.Length != inorder.Length) return null;
-            Dictionary<int, int> dt = new Dictionary<int, int>();
-            //将中序遍历存储记录对应下标
-            for (int i = 0; i < inorder.Length; i++)
-            {
-                dt.Add(inorder[i], i);
-            }
-            return reBuildTree(0, preorder.Length - 1, 0, inorder.Length - 1);
-
-            TreeNode reBuildTree(int perLeft, int perRight, int inLeft, int inRight)
-            {
-                //终止条件
-                if (perLeft > perRight) return null;
-                //根节点位置
-                int rootIndex = dt[preorder[perLeft]];
-                //左子树结点数
-                int leftSubTreeNodes = rootIndex - inLeft;
-                //定义根节点
-                TreeNode node = new TreeNode(preorder[perLeft]);
-                //前序遍历中[根节点之后leftSubTreeNodes个元素]对应[中序遍历中从左边界到根节点之间的元素]
-                node.left = reBuildTree(perLeft + 1, perLeft + leftSubTreeNodes, inLeft, rootIndex);
-                //前序遍历中[左边界+左结点数量+1到右边界元素]对应[中序遍历中从根节点+1到右边界元素]
-                node.right = reBuildTree(perLeft + 1 + leftSubTreeNodes, perRight, rootIndex + 1, inRight);
-                return node;
-            }
-        }
-
         #region 深度优先搜索
         //112. 路径总和
         public bool HasPathSum(TreeNode root, int targetSum)
@@ -187,31 +189,6 @@ namespace Tree
             if (root.left == null && root.right == null)
                 return targetSum == root.val;
             return HasPathSum(root.left, targetSum - root.val) || HasPathSum(root.right, targetSum - root.val);
-        }
-        //617. 合并二叉树
-        public TreeNode MergeTrees(TreeNode root1, TreeNode root2)
-        {
-            if (root1 == null && root2 == null)
-                return null;
-            if (root1 == null || root2 == null)
-                return root1 == null ? root2 : root1;
-            TreeNode node = new TreeNode(root1.val + root2.val);
-            node.left = MergeTrees(root1.left, root2.left);
-            node.right = MergeTrees(root1.right, root2.right);
-            return node;
-        }
-        //反转链表
-        public TreeNode InvertTree(TreeNode root)
-        {
-            //自底向上 后序遍历？先递归 在求解
-            //自顶向下 前序遍历？先求解 在递归
-            if (root == null) return null;
-            TreeNode left = InvertTree(root.left);
-            TreeNode right = InvertTree(root.right);
-            root.left = right;
-            root.right = left;
-            return root;
-
         }
         #endregion
 
@@ -359,7 +336,7 @@ namespace Tree
             }
         }
         // 后序遍历  左节点-右节点-根节点
-        public void BackOrder(TreeNode root)
+        public void PostOrder(TreeNode root)
         {
             if (root != null)
             {
@@ -567,10 +544,18 @@ namespace Tree
         #endregion
 
         // 判断一个树是平衡二叉树
-        // todo
-        public static bool IsBanlanceBT(TreeNode node)
+        public static bool IsBalanced(TreeNode root)
         {
-            return false;
+            if (root == null)
+            {
+                return true;
+            }
+            return Math.Abs(maxDepth(root.left) - maxDepth(root.right)) <= 1 ? IsBalanced(root.left) && IsBalanced(root.right) : false;
+
+            int maxDepth(TreeNode node)
+            {
+                return node == null ? 0 : Math.Max(maxDepth(node.left), maxDepth(node.right)) + 1;
+            }
         }
 
         // 二叉树的最低公共节点

@@ -42,9 +42,15 @@ namespace Common
         };
 
         public int[][] twoArrayThree = new int[3][] {
-            new int[] {1,2,3,4},
-            new int[] {5,6,7,8},
-            new int[] {9,10,11,12},
+            new int[] {1,1,0,0,0},
+            new int[] {1,1,1,1,0},
+            new int[] {1,1,1,0,0},
+        };
+
+        public int[][] twoArrayFour = new int[3][] {
+            new int[] {1,2,3},
+            new int[] {4,5,6},
+            new int[] {7,8,9},
         };
 
         public int[] RandomArray()

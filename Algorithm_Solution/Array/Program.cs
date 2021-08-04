@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -21,21 +23,25 @@ namespace Array
             aInt[0] = new char[] { 'a' };
             //aInt[1] = new int[] { 6 };
             int[,] ab2 = new int[2, 1] { { 5 }, { 6 } };
-            int[] test = new int[] { 2, 2, 7, 11, 15 };
+            int[] test = new int[] { 2, 6, 4, 8, 10, 9, 15 };
             //int32 最小值取反越界
             //int n1 = int.MinValue;
             int n = 2;
             int n1 = 7;
             int n2 = n ^ n1;
             //problems.MaxSubArray(new int[] { -2, 1, -3, 4, -1, 2, 1, -5, 4 });
-            problems.TranslateNum(1225);
+            //problems.KWeakestRows(testCase.twoArrayThree, 2);
             //int[] testNums = knowledge.Reverse(testCase.nums);
             //Console.WriteLine(string.Join("", testNums.ToArray()));
             //problems.IntToRoman(testCase.MyProperty2);
             //Knowledge.Rank(3, testCase.index);
-
-            var rcptnos = new List<string>();
-            //var n = problems.TwoSum2(new int[] { 2, 2, 7, 11, 15 }, 100);
+            //List<int[]> list = new List<int[]>();
+            //list.Sort((a1, b) =>
+            //{
+            //    return a1[1].CompareTo(b[1]);
+            //});
+            uint i = 00000000000000000000000000001011;
+            problems.SpiralOrder(testCase.twoArrayFour);
             //problems.SpiralOrder(testCase.twoArrayThree);
             //problems.ContainsNearbyDuplicate(testCase.nums, 1);
             double a = 1.0 / 0.0;
@@ -45,6 +51,102 @@ namespace Array
 
     class Problems
     {
+        public int[] SpiralOrder(int[][] matrix)
+        {
+            int m = matrix.Length;
+            int n = matrix[0].Length;
+            List<int> list = new List<int>();
+            // 列边界
+            int left = 0;
+            int right = m - 1;
+            // 行边界
+            int top = 0;
+            int down = n - 1;
+            while (left <= right && top <= down)
+            {
+                // 从左往右
+                for (int i = left; i <= right && left <= right; i++)
+                {
+                    list.Add(matrix[top][i]);
+                }
+                top++;
+                // 从上到下
+                for (int i = top; i <= down & top <= down; i++)
+                {
+                    list.Add(matrix[right][i]);
+                }
+                right--;
+                // 从右向左
+                for (int i = right; i >= left && left <= right; i--)
+                {
+                    list.Add(matrix[down][i]);
+                }
+                down--;
+                // 从下到上
+                for (int i = down; i >= top && top <= down; i--)
+                {
+                    list.Add(matrix[left][i]);
+                }
+                left++;
+            }
+            return list.ToArray();
+        }
+        public int HammingWeight(uint n)
+        {
+            int ans = 0;
+            string s = n.ToString();
+            foreach (var item in s)
+            {
+                if (item == '1')
+                {
+                    ans++;
+                }
+            }
+            return ans;
+        }
+        public int FindUnsortedSubarray(int[] nums)
+        {
+            int len = nums.Length;
+            if (len == 1)
+            {
+                return 0;
+            }
+            int[] temp = new int[nums.Length];
+            nums.CopyTo(temp, 0);
+            // 排序+双指针
+            // 找到左右端第一个不相等的值
+            System.Array.Sort(nums);
+            int i = 0;
+            int j = len - 1;
+            while (i <= j && nums[i] == temp[i])
+            {
+                i++;
+            }
+            while (i <= j && nums[j] == temp[j])
+            {
+                j--;
+            }
+            return j - i + 1;
+        }
+
+        // 88. 合并两个有序数组
+        public void Merge(int[] nums1, int m, int[] nums2, int n)
+        {
+            // 两个有序数组
+            // 从后往前塞入大的值
+            int k = m + n - 1;  //最后一个位置
+            int i = m - 1, j = n - 1;
+            //每次都挑最大的数出来
+            while (i >= 0 && j >= 0)
+            {
+                nums1[k--] = (nums1[i] > nums2[j]) ? nums1[i--] : nums2[j--];
+            }
+            while (j >= 0)
+            {
+                nums1[k--] = nums2[j--];
+            }
+        }
+
         //4. 寻找两个正序数组的中位数
         public double FindMedianSortedArrays(int[] nums1, int[] nums2)
         {
@@ -412,34 +514,6 @@ namespace Array
         //滑动窗口:
         //看作是在数组中拖入一个窗口(队列)，并进行窗口的移动(加减)
         //3. 无重复字符的最长子串
-        public int LengthOfLongestSubstring(String s)
-        {
-            //if (s.Length == 0) return 0;
-            //Dictionary<char, int> dict = new Dictionary<char, int>();
-            //int max = 0;
-            //int left = 0;
-            //for (int i = 0; i < s.Length; i++)
-            //{
-            //    if (dict.ContainsKey(s[i]))
-            //    {
-            //        left = Math.Max(left, dict[s[i]] + 1);
-            //    }
-            //    dict[s[i]] = i;
-            //    max = Math.Max(max, i - left + 1);
-            //}
-            //return max;
-            if (s.Length == 0) return 0;
-            int max = 0;
-            Queue<char> queue = new Queue<char>();
-            for (int i = 0; i < s.Length; i++)
-            {
-                while (queue.Contains(s[i]))
-                    queue.Dequeue();
-                queue.Enqueue(s[i]);
-                if (queue.Count > max) max = queue.Count;
-            }
-            return max;
-        }
         public bool CheckInclusion(string s1, string s2)
         {
             //固定活动窗口的长度为s1的长度
@@ -1091,42 +1165,6 @@ namespace Array
                     param.Length--;
                     used[i] = false;
                 }
-            }
-        }
-
-        public bool Exist(char[][] board, string word)
-        {
-            //深度优先搜索+回溯
-            //特殊情况
-            if (word == null || board.Length == 0 || board[0].Length == 0) return false;
-            int count = board.Length;
-            int len = board[0].Length;
-            bool[,] visited = new bool[count, len];
-            char[] ans = word.ToArray();
-            for (int i = 0; i < count; i++)
-            {
-                for (int j = 0; j < len; j++)
-                {
-                    if (dfs(i, j, 0))
-                        return true;
-                }
-            }
-            return false;
-
-            bool dfs(int i, int j, int start)
-            {
-                if (i < 0 || i >= count || j < 0 || j >= len || ans[start] != board[i][j] || visited[i, j])
-                    return false;
-                //找到了满足条件的字符串
-                if (start == ans.Length - 1) return true;
-                visited[i, j] = true;
-                bool res = false;
-                res = dfs(i + 1, j, start + 1)
-                    || dfs(i - 1, j, start + 1)
-                    || dfs(i, j + 1, start + 1)
-                    || dfs(i, j - 1, start + 1);
-                visited[i, j] = false;
-                return res;
             }
         }
         #endregion
