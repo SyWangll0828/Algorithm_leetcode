@@ -22,7 +22,7 @@ namespace Stack
             //problems.NextGreaterElements(testCase.nums1);
             //problems.BuildArray(testCase.traget, testCase.n);
             int[] res = new int[] { 3, 2, 4 };
-            bool isv = problems.IsValid("({})");
+            //bool isv = problems.IsValid("({})");
             Console.ReadKey();
         }
     }

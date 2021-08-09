@@ -23,25 +23,27 @@ namespace Array
             aInt[0] = new char[] { 'a' };
             //aInt[1] = new int[] { 6 };
             int[,] ab2 = new int[2, 1] { { 5 }, { 6 } };
-            int[] test = new int[] { 2, 6, 4, 8, 10, 9, 15 };
+            int[] test = new int[] { 0,1,3 };
             //int32 最小值取反越界
             //int n1 = int.MinValue;
             int n = 2;
             int n1 = 7;
             int n2 = n ^ n1;
+            int n3 = '5' - '1';
+            string stre = "asdasd";
             //problems.MaxSubArray(new int[] { -2, 1, -3, 4, -1, 2, 1, -5, 4 });
-            //problems.KWeakestRows(testCase.twoArrayThree, 2);
+            //problems.MatrixReshape(testCase.twoArrayThree, 1, 15);
             //int[] testNums = knowledge.Reverse(testCase.nums);
             //Console.WriteLine(string.Join("", testNums.ToArray()));
             //problems.IntToRoman(testCase.MyProperty2);
             //Knowledge.Rank(3, testCase.index);
-            //List<int[]> list = new List<int[]>();
+            List<int> list = new List<int>();
             //list.Sort((a1, b) =>
             //{
             //    return a1[1].CompareTo(b[1]);
             //});
             uint i = 00000000000000000000000000001011;
-            problems.SpiralOrder(testCase.twoArrayFour);
+            problems.MissingNumber(test);
             //problems.SpiralOrder(testCase.twoArrayThree);
             //problems.ContainsNearbyDuplicate(testCase.nums, 1);
             double a = 1.0 / 0.0;
@@ -51,59 +53,124 @@ namespace Array
 
     class Problems
     {
-        public int[] SpiralOrder(int[][] matrix)
+
+        public int NthUglyNumber(int n)
         {
-            int m = matrix.Length;
-            int n = matrix[0].Length;
+            if (n < 2)
+            {
+                return n;
+            }
+            // 后续的丑数可以由基础丑数相乘得到
+            int[] uglyNums = new int[n];
+            uglyNums[0] = 1;
+            int a = 0, b = 0, c = 0;
+            int nextIndex = 1;
+            while (nextIndex < n)
+            {
+                int t1 = uglyNums[a] * 2, t2 = uglyNums[b] * 3, t3 = uglyNums[c] * 5;
+                int min = Math.Min(Math.Min(t1, t2), t3);
+                uglyNums[nextIndex] = min;
+                if (t1 == uglyNums[nextIndex])
+                {
+                    a++;
+                }
+                if (t2 == uglyNums[nextIndex])
+                {
+                    b++;
+                }
+                if (t3 == uglyNums[nextIndex])
+                {
+                    c++;
+                }
+                nextIndex++;
+            }
+            return uglyNums[n - 1];
+        }
+        // 约瑟夫环？
+        public int LastRemaining(int n, int m)
+        {
+            // 模拟
             List<int> list = new List<int>();
-            // 列边界
-            int left = 0;
-            int right = m - 1;
-            // 行边界
-            int top = 0;
-            int down = n - 1;
-            while (left <= right && top <= down)
+            for (int i = 0; i < n; i++)
             {
-                // 从左往右
-                for (int i = left; i <= right && left <= right; i++)
-                {
-                    list.Add(matrix[top][i]);
-                }
-                top++;
-                // 从上到下
-                for (int i = top; i <= down & top <= down; i++)
-                {
-                    list.Add(matrix[right][i]);
-                }
-                right--;
-                // 从右向左
-                for (int i = right; i >= left && left <= right; i--)
-                {
-                    list.Add(matrix[down][i]);
-                }
-                down--;
-                // 从下到上
-                for (int i = down; i >= top && top <= down; i--)
-                {
-                    list.Add(matrix[left][i]);
-                }
-                left++;
+                list.Add(i);
             }
-            return list.ToArray();
+            int index = 0;
+            // 删除数字
+            while (n > 1)
+            {
+                index = (index + m - 1) % n;
+                list.RemoveAt(index);
+                n--;
+            }
+            return list[0];
         }
-        public int HammingWeight(uint n)
+
+        // 基于随机快速排序
+        public int[] GetLeastNumbers(int[] arr, int k)
         {
-            int ans = 0;
-            string s = n.ToString();
-            foreach (var item in s)
+            // 快速排序
+            quickSort(0, arr.Length - 1);
+            int[] res = new int[k];
+            for (int i = 0; i < k; i++)
             {
-                if (item == '1')
-                {
-                    ans++;
-                }
+                res[i] = arr[i];
             }
-            return ans;
+            return res;
+
+            void quickSort(int left, int right)
+            {
+                if (left >= right)
+                {
+                    return;
+                }
+                int l = left;
+                int r = right;
+                while (l < r)
+                {
+                    // 因为是选取左边第一个数作为基数，若是选取最后一个数作为基数，则先从左边开始找
+                    // 先从右边开始找第一个比基数小的数
+                    while (arr[r] >= arr[left] && l < r)
+                    {
+                        r--;
+                    }
+                    // 然后从左边找第一个比基数大的数
+                    while (arr[l] <= arr[left] && l < r)
+                    {
+                        l++;
+                    }
+                    swap(l, r);
+                }
+                // 交换中间数与基数的位置
+                // 基数左边都是小于基数的数；右边都是大于基数的数
+                swap(left, l);
+                quickSort(left, l - 1);
+                quickSort(l + 1, right);
+            }
+
+            void swap(int a, int b)
+            {
+                int t = arr[a];
+                arr[a] = arr[b];
+                arr[b] = t;
+            }
         }
+
+        // 
+        public int[] PrintNumbers(int n)
+        {
+            // 大数问题
+            //int digital = (int)Math.Pow(10, n)-1;
+            //int[] printArr = new int[digital];
+            //for (int i = 0; i < digital; i++)
+            //{
+            //    printArr[i] = i + 1;
+            //}
+            //return printArr;
+
+            return new int[5];
+        }
+
         public int FindUnsortedSubarray(int[] nums)
         {
             int len = nums.Length;
@@ -513,7 +580,7 @@ namespace Array
         #region 滑动窗口
         //滑动窗口:
         //看作是在数组中拖入一个窗口(队列)，并进行窗口的移动(加减)
-        //3. 无重复字符的最长子串
+        // 567. 字符串的排列
         public bool CheckInclusion(string s1, string s2)
         {
             //固定活动窗口的长度为s1的长度
@@ -1022,15 +1089,15 @@ namespace Array
             return f[k, n - 1];
         }
         //剑指 Offer 62. 圆圈中最后剩下的数字 (约瑟夫环问题)
-        public int LastRemaining(int n, int m)
-        {
-            int x = 0;
-            for (int i = 2; i <= n; i++)
-            {
-                x = (x + m) % i;
-            }
-            return x;
-        }
+        //public int LastRemaining(int n, int m)
+        //{
+        //    int x = 0;
+        //    for (int i = 2; i <= n; i++)
+        //    {
+        //        x = (x + m) % i;
+        //    }
+        //    return x;
+        //}
         #endregion
 
         #region 回溯
@@ -1309,35 +1376,7 @@ namespace Array
         }
 
         //快速幂 -- 分治思想
-        //50. Pow(x, n)
-        public double MyPow(double x, int n)
-        {
-            //折半考虑
-            double res = 1.0;
-            for (int i = n; i != 0; i /= 2)
-            {
-                if (i % 2 != 0) res *= x;
-                x *= x;
-            }
-            return n < 0 ? 1 / res : res;
 
-            //防止越界，用long类型接收
-            //long tempN = n;
-            //if (tempN < 0)
-            //{
-            //    tempN = -tempN;
-            //    x = 1 / x;
-            //}
-            //double res = 1.0;
-            //while (tempN > 0)
-            //{
-            //    //奇数，乘以一个x
-            //    if ((tempN & 1) == 1) res *= x;
-            //    x *= x;
-            //    tempN >>= 1;
-            //}
-            //return res;
-        }
         #endregion
 
 
@@ -1345,7 +1384,38 @@ namespace Array
 
     class Knowledge
     {
-        //翻转数组
+        // 50. Pow(x, n)
+        public double MyPow(double x, int n)
+        {
+            //折半考虑
+            //double res = 1.0;
+            //for (int i = n; i != 0; i /= 2)
+            //{
+            //    if (i % 2 != 0) res *= x;
+            //    x *= x;
+            //}
+            //return n < 0 ? 1 / res : res;
+
+            // int取值范围问题 此处要用-t来取到整形最小负数的取反数
+            long tempN = n;
+            if (tempN < 0)
+            {
+                tempN = -tempN;
+                x = 1 / x;
+            }
+            double res = 1.0;
+            // 模拟求指数次幂函数
+            while (tempN > 0)
+            {
+                //奇数，乘以一个x
+                if ((tempN & 1) == 1) res *= x;
+                x *= x;
+                tempN >>= 1;
+            }
+            return res;
+        }
+
+        // 翻转数组
         public int[] Reverse(int[] nums)
         {
             int n = nums.Length;
@@ -1358,7 +1428,7 @@ namespace Array
             return nums;
         }
 
-        //二分查找的递归实现
+        // 二分查找的递归实现
         public static int Rank(int key, int[] nums)
         {
             return Rank(key, nums, 0, nums.Length - 1);

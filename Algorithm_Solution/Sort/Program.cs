@@ -20,7 +20,7 @@ namespace Sort
             //Knowledge.SortSolution.ShellSort(testCase.sort);
             int[] test = testCase.RandomArray();
             int[] res = new int[] { 7, 5, 6, 4, 8, 10, 0, 6, 9 };
-            SortSolution.RandomQuick(res,0,res.Length-1);
+            SortSolution.RandomQuick(res, 0, res.Length - 1);
             if (BaseFunc.isSorted(res))
                 BaseFunc.Print(res);
             else
@@ -236,16 +236,16 @@ namespace Sort
                         //<=操作 便于跳出循环
                         while (left <= right && paras[left] <= pivot) left++;
                         while (left <= right && paras[right] > pivot) right--;
-                        Console.WriteLine($"before:left={left},right={right}");
-                        BaseFunc.Print(paras);
+                        //Console.WriteLine($"before:left={left},right={right}");
+                        //BaseFunc.Print(paras);
                         if (left < right)
                             BaseFunc.exch(paras, left, right);
-                        Console.WriteLine("交换后");
-                        BaseFunc.Print(paras);
+                        //Console.WriteLine("交换后");
+                        //BaseFunc.Print(paras);
                     }
                     //最后中心点的值和左右下标相聚时的值进行交换
                     BaseFunc.exch(paras, left, rightBound);
-                    BaseFunc.Print(paras);
+                    //BaseFunc.Print(paras);
                     //返回新的中心点值
                     return left;
                 }

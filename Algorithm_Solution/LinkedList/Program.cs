@@ -18,7 +18,7 @@ namespace LinkedList
             int[] arr1 = testCase.nums4;
             ListNode node1 = Knowleage.CreateListNodes(arr);
             ListNode node2 = Knowleage.CreateListNodes(arr1);
-            problems.SortedListToBST(node1);
+            problems.ReverseList(node1);
             //Knowleage.PrintListNodes(head);
             //Knowleage.PrintListNodes(resHead);
         }
