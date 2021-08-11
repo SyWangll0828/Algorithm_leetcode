@@ -18,7 +18,8 @@ namespace Math
             int n1 = 1, n2 = 2;
             int n3 = 1 << 2;
             n3 = n1 & n2;
-            //Console.WriteLine(problems.RestoreString(testCase.s, testCase.index));
+            int[] test = new int[] { 3, 6, 3, 3 };
+            problems.SingleNumber(test);
             char[] res = new char[] { 'h', 'e', 'l', 'l', 'o' };
             int[] res1 = new int[] { 1, 3 };
             int[] res2 = new int[] { 1, 2, 5, 2 };
@@ -326,6 +327,7 @@ namespace Math
         //x & (-x+1) --> 得到最低位的1  
         //x & ~x --> 0
         //2、或（|）
+        // 有1则为1 1|0=1 1|1=1 0|0=0
         //3、异或（^）  可表示无进位相加
         //1^1=0  不同为1，相同为0
         //x ^ 0 = x, x ^ x = 0    a ^ b = c, a ^ c = b, b ^ c = a
@@ -394,7 +396,7 @@ namespace Math
                 }
                 //如果1的个数不是3的倍数，说明那个只出现一次的数字的二进制位中在这一位是1
                 if (oneCount % 3 == 1)
-                    res |= (1 << i);
+                    res = res | (1 << i);
             }
             return res;
         }
@@ -464,19 +466,6 @@ namespace Math
             }
             return res.ToString();
         }
-        //
-        public string ToLowerCase(string s)
-        {
-            var build = new StringBuilder();
-            build.Append(s);
-            for (int i = 0; i < build.Length; i++)
-            {
-                build[i] = build[i] >= 'A' && build[i] <= 'Z' ? (char)(build[i] + 32) : build[i];
-
-            }
-            return build.ToString();
-
-        }
 
         //461. 汉明距离
         //计算 x 和 y 之间的汉明距离，可以先计算 x异或y，然后统计结果中等于1的位数。
@@ -491,27 +480,6 @@ namespace Math
                 res += s & 1;
                 //右移一位
                 s >>= 1;
-            }
-            return res;
-        }
-
-        //191. 位1的个数
-        public int HammingWeight(int n)
-        {
-            int res = 0;
-            int n1 = n;
-
-            //for (int i = 0; i < 32; i++)
-            //{
-            //    res += ((n >> i) & 1);
-            //}
-            //return res;
-
-            //消除二进制末尾的1
-            while (n != 0)
-            {
-                n = n & (n - 1);
-                res++;
             }
             return res;
         }

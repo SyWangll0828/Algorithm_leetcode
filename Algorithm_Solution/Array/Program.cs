@@ -23,7 +23,7 @@ namespace Array
             aInt[0] = new char[] { 'a' };
             //aInt[1] = new int[] { 6 };
             int[,] ab2 = new int[2, 1] { { 5 }, { 6 } };
-            int[] test = new int[] { 0,1,3 };
+            int[] test = new int[] { 0, 1, 3 };
             //int32 最小值取反越界
             //int n1 = int.MinValue;
             int n = 2;
@@ -43,7 +43,7 @@ namespace Array
             //    return a1[1].CompareTo(b[1]);
             //});
             uint i = 00000000000000000000000000001011;
-            problems.MissingNumber(test);
+            //problems.FindContinuousSequence(9);
             //problems.SpiralOrder(testCase.twoArrayThree);
             //problems.ContainsNearbyDuplicate(testCase.nums, 1);
             double a = 1.0 / 0.0;
@@ -53,59 +53,6 @@ namespace Array
 
     class Problems
     {
-
-        public int NthUglyNumber(int n)
-        {
-            if (n < 2)
-            {
-                return n;
-            }
-            // 后续的丑数可以由基础丑数相乘得到
-            int[] uglyNums = new int[n];
-            uglyNums[0] = 1;
-            int a = 0, b = 0, c = 0;
-            int nextIndex = 1;
-            while (nextIndex < n)
-            {
-                int t1 = uglyNums[a] * 2, t2 = uglyNums[b] * 3, t3 = uglyNums[c] * 5;
-                int min = Math.Min(Math.Min(t1, t2), t3);
-                uglyNums[nextIndex] = min;
-                if (t1 == uglyNums[nextIndex])
-                {
-                    a++;
-                }
-                if (t2 == uglyNums[nextIndex])
-                {
-                    b++;
-                }
-                if (t3 == uglyNums[nextIndex])
-                {
-                    c++;
-                }
-                nextIndex++;
-            }
-            return uglyNums[n - 1];
-        }
-        // 约瑟夫环？
-        public int LastRemaining(int n, int m)
-        {
-            // 模拟
-            List<int> list = new List<int>();
-            for (int i = 0; i < n; i++)
-            {
-                list.Add(i);
-            }
-            int index = 0;
-            // 删除数字
-            while (n > 1)
-            {
-                index = (index + m - 1) % n;
-                list.RemoveAt(index);
-                n--;
-            }
-            return list[0];
-        }
-
         // 基于随机快速排序
         public int[] GetLeastNumbers(int[] arr, int k)
         {
@@ -659,61 +606,36 @@ namespace Array
                 return true;
             }
         }
+
+
         //剑指 Offer 57 - II. 和为s的连续正数序列
-        public int[][] FindContinuousSequence(int target)
-        {
-            //if (target < 3) return new int[0][];
-            ////滑动窗口
-            //int left = 0, right = 1;
-            //int[] temp = new int[target];
-
-            //List<int[]> res = new List<int[]>();
-            //for (int i = 0; i < target; i++) temp[i] = i + 1;
-            //while (left < right && right <= (target + 1) / 2)
-            //{
-            //    int sum = 0;
-            //    for (int i = left; i <= right; i++) sum += temp[i];
-            //    if (sum < target) right++;
-            //    else if (sum > target) left++;
-            //    else
-            //    {
-            //        int len = right - left + 1;
-            //        int[] t = new int[len];
-            //        for (int i = left, j = 0; i <= right && j < len; i++)
-            //        {
-            //            t[j++] = temp[i];
-            //        }
-            //        res.Add(t);
-            //        right++;
-            //    }
-            //}
-            //return res.ToArray();
-
-            //可以直接用数字来写
-            int i = 1, j = 2, s = 3;
-            List<int[]> res = new List<int[]>();
-            while (i < j)
-            {
-                if (s == target)
-                {
-                    int[] ans = new int[j - i + 1];
-                    for (int k = i; k <= j; k++)
-                        ans[k - i] = k;
-                    res.Add(ans);
-                }
-                if (s >= target)
-                {
-                    s -= i;
-                    i++;
-                }
-                else
-                {
-                    j++;
-                    s += j;
-                }
-            }
-            return res.ToArray();
-        }
+        //public int[][] FindContinuousSequence(int target)
+        //{
+        //    //可以直接用数字来写
+        //    int i = 1, j = 2, s = 3;
+        //    List<int[]> res = new List<int[]>();
+        //    while (i < j)
+        //    {
+        //        if (s == target)
+        //        {
+        //            int[] ans = new int[j - i + 1];
+        //            for (int k = i; k <= j; k++)
+        //                ans[k - i] = k;
+        //            res.Add(ans);
+        //        }
+        //        if (s >= target)
+        //        {
+        //            s -= i;
+        //            i++;
+        //        }
+        //        else
+        //        {
+        //            j++;
+        //            s += j;
+        //        }
+        //    }
+        //    return res.ToArray();
+        //}
         #endregion
 
         #region 动态规划
@@ -1088,16 +1010,17 @@ namespace Array
             }
             return f[k, n - 1];
         }
+        // b
         //剑指 Offer 62. 圆圈中最后剩下的数字 (约瑟夫环问题)
-        //public int LastRemaining(int n, int m)
-        //{
-        //    int x = 0;
-        //    for (int i = 2; i <= n; i++)
-        //    {
-        //        x = (x + m) % i;
-        //    }
-        //    return x;
-        //}
+        public int LastRemaining(int n, int m)
+        {
+            int x = 0;
+            for (int i = 2; i <= n; i++)
+            {
+                x = (x + m) % i;
+            }
+            return x;
+        }
         #endregion
 
         #region 回溯
