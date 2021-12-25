@@ -12,182 +12,46 @@ namespace Stack
     {
         static void Main(string[] args)
         {
-            Problems problems = new Problems();
             //实例化可以访问类成员;直接访问需要添加static
             Common.Case testCase = new Common.Case();
             //problems.IntToRoman(testCase.MyProperty2);
-            //problems.ReverseWords("Let's take LeetCode contest");
-            //problems.DecodeString(testCase.s);
-            //problems.NextGreaterElement(testCase.nums1, testCase.nums2);
-            //problems.NextGreaterElements(testCase.nums1);
-            //problems.BuildArray(testCase.traget, testCase.n);
             int[] res = new int[] { 3, 2, 4 };
             //bool isv = problems.IsValid("({})");
             Console.ReadKey();
         }
     }
 
-    class Problems
+    class Knowleage
     {
-        //栈的特性：后入先出
-        readonly Tuple<string, int>[] tuples = {
-        //从大到小，便于显示
-        new Tuple<string, int>("M",1000),
-        new Tuple<string, int>("D",500),
-        new Tuple<string, int>("CD",400),
-        new Tuple<string, int>("C",100),
-        new Tuple<string, int>("L",50),
-        new Tuple<string, int>("XL",40),
-        new Tuple<string, int>("X",10),
-        new Tuple<string, int>("V",5),
-        new Tuple<string, int>("IV",4),
-        new Tuple<string, int>("I",1),
-        };
+        #region 栈性质：先入后出
+         // 栈的应用：1、反转顺序；2、先处理后来进入的元素
 
-        //1711. 大餐计数
-        public int CountPairs(int[] deliciousness)
+        // 反转栈中的元素
+        // 返回 3 2 1 变成 返回 1 2 3
+        public void Reverse(Stack<int> stack)
         {
-            int mod = 1000000007;
-            Dictionary<int, int> dict = new Dictionary<int, int>();
-            int len = deliciousness.Length;
-            int count = 0;
-            for (int i = 0; i < len; i++)
-            {
-                for (int j = i + 1; j < len; j++)
-                {
-                    int sum = deliciousness[i] + deliciousness[j];
-                    if (sum > 0 && (sum & (sum - 1)) == 0)
-                    {
-                        if (dict.ContainsKey(deliciousness[i])) dict[deliciousness[i]]++;
-                        else dict.Add(deliciousness[i], 1);
-                        int value = 0;
-                        dict.TryGetValue(i, out value);
-                        count = (count + value) % mod;
-                    }
-                    continue;
-                }
-            }
-            return count;
-        }
-        public string IntToRoman(int num)
-        {
-            StringBuilder builder = new StringBuilder();
-            //罗马数字组成都是先去可以表示的最大值
-            //140 -> CXL
-            foreach (var item in tuples)
-            {
-                string key = item.Item1;
-                int value = item.Item2;
-                while (num >= value)
-                {
-                    num -= value;
-                    builder.Append(key);
-                }
-                if (num == 0)
-                    break;
-            }
-            return builder.ToString();
+            if (stack.Count == 0) return;
+            int i = f(stack);
+            Reverse(stack);
+            stack.Push(i);
         }
 
-        //1047. 删除字符串中的所有相邻重复项
-        public string RemoveDuplicates(string s)
+        private int f(Stack<int> stack)
         {
-            //StringBuilder可以充当栈
-            StringBuilder sb = new StringBuilder();
-            foreach (var c in s)
+            int result = stack.Pop();
+            if (stack.Count == 0) return result;
+            else
             {
-                int len = sb.Length;
-                if (len > 0 && c == sb[len - 1])
-                    sb.Remove(len - 1, 1);
-                else
-                    sb.Append(c);
+                int last = f(stack);
+                stack.Push(result);
+                return last;
             }
-            return sb.ToString();
         }
 
-        //1441. 用栈操作构建数组
-        public IList<string> BuildArray(int[] target, int n)
-        {
-            List<string> list = new List<string>();
-            for (int i = 1, index = 0; i <= n && index < target.Length; i++)
-            {
-                if (target[index] == i)
-                {
-                    list.Add("Push");
-                    index++;
-                }
-                else
-                {
-                    //目标数组值已经经过了一次入栈出栈
-                    list.Add("Push");
-                    list.Add("Pop");
-                }
-            }
-            return list;
-        }
-
-        //1544. 整理字符串
-        public string MakeGood(string s)
-        {
-            Stack<char> stack = new Stack<char>();
-            for (int i = 0; i < s.Length; i++)
-            {
-                //栈里有无相应的大小写字母;有的话将其出栈。
-                if (stack.Count != 0 && (char.ToUpper(stack.Peek()) == s[i] || char.ToLower(stack.Peek()) == s[i]) && stack.Peek() != s[i])
-                    stack.Pop();
-                else
-                    //将元素添加到栈
-                    stack.Push(s[i]);
-            }
-            //栈后进先出 在赋值一个新栈
-            Stack<char> reverseStack = new Stack<char>();
-            while (stack.Count > 0)
-            {
-                reverseStack.Push(stack.Pop());
-            }
-            return string.Join("", reverseStack.ToArray());
-        }
-
-        //150.  逆波兰表达式求值
-        public int EvalRPN(string[] tokens)
-        {
-            Stack<int> s = new Stack<int>();
-            int temp;
-            foreach (var c in tokens)
-            {
-                if (int.TryParse(c, out temp))
-                    s.Push(temp);
-                else
-                {
-                    //将前两个数字出栈
-                    int nums1 = s.Pop();
-                    int nums2 = s.Pop();
-                    switch (c)
-                    {
-                        case "+":
-                            s.Push(nums2 + nums1);
-                            break;
-                        case "-":
-                            s.Push(nums2 - nums1);
-                            break;
-                        case "*":
-                            s.Push(nums2 * nums1);
-                            break;
-                        //整数除法只保留整数部分
-                        case "/":
-                            s.Push(nums2 / nums1);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            return s.Pop();
-
-        }
+        #endregion
 
         #region 特殊的数据结构--单调栈
-        //单调栈专门解决Next Greater Number(模板一)
+        // 单调栈专门解决Next Greater Number(模板一)
         public int[] NextGreaterNumberOne(int[] nums)
         {
             int[] ans = new int[nums.Length]; // 存放答案的数组
@@ -204,7 +68,7 @@ namespace Stack
             return ans;
         }
 
-        //单调栈专门解决Next Greater Number(模板二-循环数组)
+        // 单调栈专门解决Next Greater Number(模板二-循环数组)
         public int[] NextGreaterNumberTwo(int[] nums)
         {
             /*计算机的内存都是线性的，没有真正意义上的环形数组，但是我们可以模拟出环形数组的效果，一般是通过 % 运算符求模（余数），获得环形特效：
@@ -229,7 +93,7 @@ namespace Stack
             return ans;
         }
 
-        //496. 下一个更大元素 I
+        // 496. 下一个更大元素 I
         public int[] NextGreaterElement(int[] nums1, int[] nums2)
         {
             int[] ans = new int[nums1.Length];// 存放答案的数组
@@ -253,7 +117,7 @@ namespace Stack
             return ans;
         }
 
-        //503. 下一个更大元素 II ( 循环数组 )
+        // 503. 下一个更大元素 II ( 循环数组 )
         public int[] NextGreaterElements(int[] nums)
         {
             int n = nums.Length;
@@ -270,7 +134,7 @@ namespace Stack
             return ans;
         }
 
-        //739. 每日温度
+        // 739. 每日温度
         public int[] DailyTemperatures(int[] temperatures)
         {
             int[] res = new int[temperatures.Length];
@@ -289,7 +153,7 @@ namespace Stack
             return res;
         }
 
-        //84. 柱状图中最大的矩形
+        // 84. 柱状图中最大的矩形
         public int LargestRectangleArea(int[] heights)
         {
             if (heights == null || heights.Length <= 0) return 0;
@@ -305,142 +169,49 @@ namespace Stack
                 }
                 stack.Push(i);
             }
-
             return max;
         }
         #endregion
 
-        //394.  字符串解码
-        public string DecodeString(string s)
+        #region 队列性质：先入先出
+        // 单调队列 -- 队列的最大值版本
+        public class MaxQueue
         {
-            Stack<string> letter = new Stack<string>();
-            Stack<int> nums = new Stack<int>();
-            StringBuilder builder = new StringBuilder();
-            int num = 0;
-            foreach (var c in s)
+            Queue<int> inQueue;
+            LinkedList<int> maxQueue;
+            public MaxQueue()
             {
-                //处理连续数字的情况
-                if (char.IsDigit(c))
+                inQueue = new Queue<int>();
+                maxQueue = new LinkedList<int>();
+            }
+
+            public int Max_value()
+            {
+                return maxQueue.Count == 0 ? -1 : maxQueue.Count;
+            }
+
+            // 在入队的时候构建好一个单调队列
+            public void Push_back(int value)
+            {
+                inQueue.Enqueue(value);
+                // 保持单调队列
+                while (maxQueue.Count != 0 && maxQueue.Last.Value < value)
                 {
-                    num = num * 10 + int.Parse(c.ToString());
+                    maxQueue.RemoveLast();
                 }
-                //遇到‘[’，将当前倍数以及组成的字符串入栈并置空
-                else if (c == '[')
-                {
-                    letter.Push(builder.ToString());
-                    builder = new StringBuilder();
-                    nums.Push(num);
-                    num = 0;
-                }
-                //栈顶出栈并
-                else if (c == ']')
-                {
-                    int count = nums.Pop();
-                    StringBuilder temp = new StringBuilder();
-                    for (int i = 0; i < count; i++)
-                    {
-                        temp.Append(builder);
-                    }
-                    builder = new StringBuilder(letter.Pop() + temp);
-                }
-                else
-                {
-                    builder.Append(c);
-                }
-            }
-            return builder.ToString();
-        }
-
-        public void Test2()
-        {
-            List<Pzhy> pzhies = new List<Pzhy>()
-            {
-                new Pzhy { phcode = "h-1", remake = "123",c=1,d=DateTime.Now },
-                new Pzhy { phcode = "h-2", remake = "345",c=2,d=DateTime.Now },
-            };
-            Pzhy p = new Pzhy();
-            PropertyInfo[] myPropertyInfo;
-            var t = p.GetType();
-            // Get the properties of 'Type' class object.
-            myPropertyInfo = t.GetProperties();
-            foreach (var property in myPropertyInfo)
-            {
-                Console.WriteLine(property.Name);
-                Console.WriteLine(property.PropertyType.Name);
-            }
-            var newType = p.GetType();
-            foreach (var m in pzhies)
-            {
-                foreach (var item in newType.GetRuntimeProperties())
-                {
-                    var type = item.PropertyType.Name;
-                    Console.WriteLine($"属性名称：{item.Name}，类型：{type}，值：{item.GetValue(m)}");
-                }
+                maxQueue.AddLast(value);
             }
 
-        }
-    }
-
-    //232. 用（两个）栈实现队列
-    public class MyQueue
-    {
-        //后入先出的输出栈模拟先入先出的队列
-        Stack<int> inStack;
-        Stack<int> outStack;
-        /** Initialize your data structure here. */
-        public MyQueue()
-        {
-            inStack = new Stack<int>();
-            outStack = new Stack<int>();
-        }
-
-        /** Push element x to the back of queue. */
-        public void Push(int x)
-        {
-            inStack.Push(x);
-        }
-
-        /** Removes the element from in front of queue and returns that element. */
-        public int Pop()
-        {
-            //输出栈没有元素，则将输入栈倒插到输出栈
-            if (!outStack.Any())
+            public int Pop_front()
             {
-                inOutStack(inStack);
-            }
-            return outStack.Pop();
-        }
-
-        /** Get the front element. */
-        public int Peek()
-        {
-            if (!outStack.Any())
-            {
-                inOutStack(inStack);
-            }
-            return outStack.Peek();
-        }
-
-        /** Returns whether the queue is empty. */
-        public bool Empty()
-        {
-            return inStack.Count == 0 && outStack.Count == 0;
-        }
-
-        public void inOutStack(Stack<int> stack)
-        {
-            while (stack.Any())
-            {
-                outStack.Push(inStack.Pop());
+                if (inQueue.Count == 0) return -1;
+                int res = inQueue.Dequeue();
+                // 值队列出队时看单调队列中对应值大小，相等的话需要出队
+                if (maxQueue.First.Value == res) maxQueue.RemoveFirst();
+                return res;
             }
         }
-    }
+        #endregion
 
-    class Pzhy
-    {
-        public string phcode { get; set; }
-        public string remake { get; set; }
-        public int c { get; set; }
-        public DateTime d { get; set; }
     }
 }
