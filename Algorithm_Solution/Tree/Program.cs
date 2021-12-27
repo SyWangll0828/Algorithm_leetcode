@@ -28,10 +28,19 @@ namespace Tree
                     right = new TreeNode(7)
                 }
             };
+            TreeNode root2 = new TreeNode(2)
+            {
+                right = new TreeNode(3)
+                {
+                },
+            };
+            //Knowleage.serialize(root2);
             Knowleage.IsComBT(root);
             int[] arr1 = new int[] { 1, 2, 3, 4, 5, 0, 7 };
             int[] arr2 = new int[] { 4, 5, 2, 6, 7, 3, 1 };
             problems.Flatten(root);
+
+
             Console.ReadKey();
         }
     }
@@ -69,6 +78,7 @@ namespace Tree
             }
         }
 
+        // 根据二叉树遍历结果重建二叉树
         public TreeNode ConstructFromPrePost(int[] preorder, int[] postorder)
         {
             int preLen = preorder.Length;
@@ -103,53 +113,8 @@ namespace Tree
                 return head;
             }
         }
-        //二叉树的层序遍历并输出
-        public int[] LevelOrder(TreeNode root)
-        {
-            //二叉树的层序遍历
-            //特殊情况
-            if (root == null) return new int[] { };
-            //将根节点依次放到队列中去
-            Queue<TreeNode> q = new Queue<TreeNode>();
-            q.Enqueue(root);
-            List<int> list = new List<int>();
-            while (q.Any())
-            {
-                TreeNode cur = q.Dequeue();
-                list.Add(cur.val);
-                if (cur.left != null)
-                    q.Enqueue(cur.left);
-                if (cur.right != null)
-                    q.Enqueue(cur.right);
-            }
-            return list.ToArray();
-        }
 
-        //剑指 Offer 34. 二叉树中和为某一值的路径
-        public IList<IList<int>> PathSum(TreeNode root, int target)
-        {
-            List<IList<int>> res = new List<IList<int>>();
-            List<int> list = new List<int>();
-            dfs(root, target);
-            return res;
-
-            void dfs(TreeNode node, int t)
-            {
-                if (node == null) return;
-                //先序遍历 + 路径记录
-                int temp = node.val;
-                list.Add(temp);
-                t -= temp;
-                if (node.left == null && node.right == null && t == 0)
-                    //需要使用new List<int>(),防止后续更改list，值跟随修改
-                    res.Add(new List<int>(list));
-                dfs(node.left, t);
-                dfs(node.right, t);
-                //回溯之前去掉list中最后的叶子节点
-                list.RemoveAt(list.Count - 1);
-            }
-        }
-
+        // 二叉树转为双向链表？？
         public TreeNode TreeToDoublyList(TreeNode root)
         {
             if (root == null) return null;
@@ -162,6 +127,7 @@ namespace Tree
             head.left = pre;
             pre.right = head;
             return head;
+
             void midOrder(TreeNode node)
             {
                 if (node == null) return;
@@ -178,87 +144,6 @@ namespace Tree
                 midOrder(node.right);
             }
         }
-
-        #region 深度优先搜索
-        //112. 路径总和
-        public bool HasPathSum(TreeNode root, int targetSum)
-        {
-            if (root == null)
-                return false;
-            //叶子节点
-            if (root.left == null && root.right == null)
-                return targetSum == root.val;
-            return HasPathSum(root.left, targetSum - root.val) || HasPathSum(root.right, targetSum - root.val);
-        }
-        #endregion
-
-        #region 广度优先搜索
-
-        #endregion
-
-        #region BST 二叉搜索树 
-        //中序遍历结果是按升序排列的
-        //后序遍历定义： [左子树 | 右子树 | 根节点] ，即遍历顺序为 “左、右、根” 。
-        //二叉搜索树定义： 左子树中所有节点的值 << 根节点的值；右子树中所有节点的值 >> 根节点的值；其左、右子树也分别为二叉搜索树
-        //结点值:left<root<right
-        public bool VerifyPostorder(int[] postorder)
-        {
-            return valid(0, postorder.Length - 1);
-
-            bool valid(int left, int right)
-            {
-                if (left >= right)
-                {
-                    return true;
-                }
-                // 从前找第一个大于根节点值的下标与最后一个小于根节点值的下标
-                // 即分界点下标
-                int index = left;
-                while (postorder[index] < postorder[right])
-                {
-                    index++;
-                }
-                for (int i = index; i < right; i++)
-                {
-                    if (postorder[i] < postorder[right])
-                    {
-                        return false;
-                    }
-                }
-                // 左右树递归返回结果
-                return valid(left, index - 1) && valid(index, right - 1);
-            }
-        }
-        //653. 两数之和 IV - 输入 BST
-        public bool FindTarget(TreeNode root, int k)
-        {
-            //中序遍历
-            var list = new List<int>();
-            traversal(root, list);
-            int low = 0, high = list.Count - 1;
-            while (low < high)
-            {
-                int sum = list[low] + list[high];
-                if (k == sum)
-                    return true;
-                else if (sum > k)
-                    high--;
-                else
-                    low++;
-            }
-            return false;
-            //局部函数
-            void traversal(TreeNode node, List<int> resList)
-            {
-                if (node == null)
-                    return;
-                traversal(node.left, resList);
-                resList.Add(node.val);
-                traversal(node.right, resList);
-            }
-        }
-        #endregion
-
     }
 
     class Knowleage
@@ -299,6 +184,7 @@ namespace Tree
             }
 
         }
+
         // 中序遍历  左节点-根节点-右节点
         public void InOrder(TreeNode root)
         {
@@ -335,6 +221,7 @@ namespace Tree
                 }
             }
         }
+
         // 后序遍历  左节点-右节点-根节点
         public void PostOrder(TreeNode root)
         {
@@ -373,15 +260,13 @@ namespace Tree
                 }
             }
         }
+
         // 深度遍历 == 先序遍历
         // 宽度遍历 == 层序遍历
         public void LevelOrder(TreeNode root)
         {
             List<int> list = new List<int>();
-            if (root == null)
-            {
-                return;
-            }
+            if (root == null) return;
             Queue<TreeNode> queue = new Queue<TreeNode>();
             // 头结点先入队
             queue.Enqueue(root);
@@ -394,41 +279,24 @@ namespace Tree
                     root = queue.Dequeue();
                     list.Add(root.val);
                     // 先左再右
-                    if (root.left != null)
-                    {
-                        queue.Enqueue(root.left);
-                    }
-                    if (root.right != null)
-                    {
-                        queue.Enqueue(root.right);
-                    }
+                    if (root.left != null) queue.Enqueue(root.left);
+                    if (root.right != null) queue.Enqueue(root.right);
                 }
             }
         }
+
         // 判断一个树是二叉搜索树
-        // 中序遍历从左到右递增
+        // 中序遍历递增
         static long preValue = long.MinValue;
         public static bool IsValidBST(TreeNode node)
         {
-            if (node == null)
-            {
-                return true;
-            }
+            if (node == null) return true;
             // 检查左树
             bool isLeftBst = IsValidBST(node.left);
-            if (!isLeftBst)
-            {
-                return false;
-            }
+            if (!isLeftBst) return false;
             // 根据二叉搜索树的中序遍历递增来判断
-            if (node.val <= preValue)
-            {
-                return false;
-            }
-            else
-            {
-                preValue = node.val;
-            }
+            if (node.val <= preValue) return false;
+            else preValue = node.val;
             return IsValidBST(node.right);
 
             // 非递归
@@ -459,6 +327,27 @@ namespace Tree
                 }
             }
             return true;
+        }
+
+        // 验证所给的后续遍历数组能否构成二叉搜索树
+        public bool VerifyPostorder(int[] postorder)
+        {
+            return valid(0, postorder.Length - 1);
+
+            bool valid(int left, int right)
+            {
+                if (left >= right) return true;
+                // 从前找第一个大于根节点值的下标与最后一个小于根节点值的下标
+                // 即分界点下标
+                int index = left;
+                while (postorder[index] < postorder[right]) index++;
+                for (int i = index; i < right; i++)
+                {
+                    if (postorder[i] < postorder[right]) return false;
+                }
+                // 左右树递归返回结果
+                return valid(left, index - 1) && valid(index, right - 1);
+            }
         }
 
         // 判断一个树是完全二叉树
@@ -551,7 +440,7 @@ namespace Tree
                 return true;
             }
             return Math.Abs(maxDepth(root.left) - maxDepth(root.right)) <= 1 ? IsBalanced(root.left) && IsBalanced(root.right) : false;
-
+            // 递归
             int maxDepth(TreeNode node)
             {
                 return node == null ? 0 : Math.Max(maxDepth(node.left), maxDepth(node.right)) + 1;
@@ -623,7 +512,7 @@ namespace Tree
 
         // 二叉树的序列化和反序列化
         // 此处采用先序遍历
-        public string serialize(TreeNode root)
+        public static string serialize(TreeNode root)
         {
             if (root == null)
             {
@@ -661,7 +550,6 @@ namespace Tree
             }
         }
     }
-
 
     class TreeNode
     {

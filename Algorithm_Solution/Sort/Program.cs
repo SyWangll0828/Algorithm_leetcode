@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 using static Sort.Knowledge;
 
 namespace Sort
@@ -18,21 +19,48 @@ namespace Sort
             //Knowledge.SortSolution.SelectSort(testCase.tsetStr);
             //Knowledge.SortSolution.InsertSort(testCase.sort);
             //Knowledge.SortSolution.ShellSort(testCase.sort);
+
+            MyTest testT = new MyTest();
+            int ant = testT.FindPalindrome();
+
+
             int[] test = testCase.RandomArray();
             int[] res = new int[] { 7, 5, 6, 4, 8, 10, 0, 6, 9 };
-            SortSolution.RandomQuick(res, 0, res.Length - 1);
+            SortSolution.BubbleSort(res);
             if (BaseFunc.isSorted(res))
                 BaseFunc.Print(res);
             else
                 Console.WriteLine("数组未成功排序");
 
-
+            Type t = typeof(Knowledge);
+            Type t2 = typeof(BaseFunc);
             SortSolution.Merge(test, 0, test.Length - 1);
             //int n = Knowledge.SortSolution.ReversePairs(res);
             //Console.WriteLine(problems.RestoreString(testCase.s, testCase.index));
             Console.ReadKey();
+
         }
     }
+
+    class MyTest
+    {
+        public int FindPalindrome()
+        {
+            int res = 11;
+            while (true)
+            {
+                if (Convert.ToString(res, 2) == new string(Convert.ToString(res, 2).Reverse().ToArray()) &&
+                    Convert.ToString(res, 8) == new string(Convert.ToString(res, 8).Reverse().ToArray()) &&
+                    Convert.ToString(res, 10) == new string(Convert.ToString(res, 10).Reverse().ToArray()))
+                {
+                    break;
+                }
+                res += 2;
+            }
+            return res;
+        }
+    }
+
     class Knowledge
     {
         public class BaseFunc
@@ -72,6 +100,7 @@ namespace Sort
                 }
                 return true;
             }
+
             //比较算法所需时间
             //public static double Time(string str,double[] a)
             //{
@@ -81,8 +110,6 @@ namespace Sort
             //{
 
             //}
-
-
         }
 
         public class SortSolution
@@ -108,26 +135,41 @@ namespace Sort
                     BaseFunc.exch(paras, i, min);
                 }
             }
-            //冒泡排序
-            //从左边开始比较，较大的往后移
-            public static void BubbleSort(int[] paras)
+
+            public static void BubbleSort(int[] para)
             {
-                //特判
-                if (paras == null || paras.Length < 2)
+                for (int i = 0; i < para.Length; i++)
                 {
-                    return;
-                }
-                //在0-->n-1上比较
-                //在0-->n-2上比较
-                for (int i = paras.Length - 1; i > 0; i--)
-                {
-                    for (int j = 0; j < i; j++)
+                    for (int j = para.Length - 1; j >= i; j--)
                     {
-                        if (paras[j] > paras[j + 1])
-                            BaseFunc.exch(paras, i, j);
+                        if (para[j] > para[j + 1])
+                        {
+                            BaseFunc.exch(para, j, j + 1);
+                        }
                     }
                 }
             }
+
+            //冒泡排序
+            //从左边开始比较，较大的往后移
+            //public static void BubbleSort(int[] paras)
+            //{
+            //    //特判
+            //    if (paras == null || paras.Length < 2)
+            //    {
+            //        return;
+            //    }
+            //    //在0-->n-1上比较
+            //    //在0-->n-2上比较
+            //    for (int i = paras.Length - 1; i > 0; i--)
+            //    {
+            //        for (int j = 0; j < i; j++)
+            //        {
+            //            if (paras[j] > paras[j + 1])
+            //                BaseFunc.exch(paras, i, j);
+            //        }
+            //    }
+            //}
 
             //插入排序
             //从下标1的元素开始与前一个元素进行比较，将元素插入到已经排序好的数组适当位置中

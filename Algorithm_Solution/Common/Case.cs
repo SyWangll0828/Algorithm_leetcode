@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common
 {
+    
     public class Case
     {
         public static int MyProperty { get; set; }
@@ -17,7 +18,7 @@ namespace Common
         public int[] traget = { 2, 3, 4 };
         public int[] nums = { 1, 0, 1, 1 };
         public int[] nums3 = { 2, 4, 3 };
-        public int[] nums4 = { 5, 6, 4 };
+        public int[] nums4 = { 1, 2, 3, 4, 5 };
         public int[] nums1 = { 7, 3, 3, 6, 6, 6, 10, 5, 9, 2 };
         public int[] nums2 = { 1, 2, 3, 4 };
         public string[] tokens = { "4", "13", "5", "/", "+" };
@@ -47,10 +48,26 @@ namespace Common
             new int[] {1,1,1,0,0},
         };
 
-        public int[][] twoArrayFour = new int[3][] {
-            new int[] {1,2,3,4},
-            new int[] {5,6,7,8},
-            new int[] {9,10,11,12},
+        public int[][] twoArrayFour = new int[5][] {
+            new int[] {2,2,1,2,2},
+            new int[] {2,2,1,2,2},
+            new int[] {2,2,1,2,2},
+            new int[] {2,2,1,2,2},
+            new int[] {2,2,1,2,2}
+        };
+
+        public int[][] twoArrayFive = new int[5][] {
+            new int[] {1,100},
+            new int[] {11,22},
+            new int[] {1,11},
+            new int[] {2,12},
+            new int[] {2,1},
+        };
+
+        public char[][] twoArraySix = new char[3][] {
+            new char[] {'A','B','C','E'},
+            new char[] {'S','F','C','S'},
+            new char[] {'S','F','C','S' }
         };
 
         public int[] RandomArray()
@@ -84,31 +101,5 @@ namespace Common
         }
     }
 
-    //单例模式
-    sealed class MyClass1
-    {
-        private MyClass1()
-        {
-
-        }
-        //使用静态初始化语句
-        private static readonly object syncObj = new object();
-        private static MyClass1 myClass = null;
-        private static MyClass1 MyClass
-        {
-            get
-            {
-                lock (syncObj)
-                {
-                    if (myClass == null)
-                        myClass = new MyClass1();
-                }
-                return myClass;
-            }
-        }
-        static MyClass1()
-        {
-
-        }
-    }
+    
 }

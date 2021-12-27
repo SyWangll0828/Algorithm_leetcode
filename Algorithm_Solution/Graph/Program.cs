@@ -24,12 +24,12 @@ namespace Graph
 
     class Problems
     {
-        //处理边权为 1 的最短路问题
+        // 处理边权为 1 的最短路问题
         #region 广度优先搜索 BFS
-        //无向图中两个顶点之间的最短路径的长度，可以通过广度优先遍历得到；
-        //为什么 BFS 得到的路径最短？可以把起点和终点所在的路径拉直来看，两点之间线段最短；
-        //已知目标顶点的情况下，可以分别从起点和目标顶点（终点）执行广度优先遍历，直到遍历的部分有交集，这是双向广度优先遍历的思想。
-        //127. 单词接龙
+        // 无向图中两个顶点之间的最短路径的长度，可以通过广度优先遍历得到；
+        // 为什么 BFS 得到的路径最短？可以把起点和终点所在的路径拉直来看，两点之间线段最短；
+        // 已知目标顶点的情况下，可以分别从起点和目标顶点（终点）执行广度优先遍历，直到遍历的部分有交集，这是双向广度优先遍历的思想。
+        // 127. 单词接龙
         public int LadderLength(string beginWord, string endWord, IList<string> wordList)
         {
             # region 双向BFS
@@ -138,7 +138,7 @@ namespace Graph
             //return 0;
             //#endregion
         }
-        //752. 打开转盘锁
+        // 752. 打开转盘锁
         public int OpenLock(string[] deadends, string target)
         {
             # region 双向BFS  模板
@@ -206,12 +206,7 @@ namespace Graph
             #endregion
         }
 
-        //773. 滑动谜题(数字华容道)
-        //public int SlidingPuzzle(int[][] board)
-        //{
-        //}
-
-        //909. 蛇梯棋
+        // 909. 蛇梯棋
         public int SnakesAndLadders(int[][] board)
         {
             //朴素BFS
@@ -268,12 +263,12 @@ namespace Graph
             }
         }
 
-        //815. 公交路线
+        // 815. 公交路线
         public int NumBusesToDestination(int[][] routes, int source, int target)
         {
             //起始时将「起点车站」所能进入的「路线」进行入队，每次从队列中取出「路线」时，查看该路线是否包含「终点车站」：
-                //包含「终点车站」：返回进入该线路所花费的距离
-                //不包含「终点车站」：遍历该路线所包含的车站，将由这些车站所能进入的路线，进行入队
+            //包含「终点车站」：返回进入该线路所花费的距离
+            //不包含「终点车站」：遍历该路线所包含的车站，将由这些车站所能进入的路线，进行入队
             //一些细节：由于是求最短路，同一路线重复入队是没有意义的，因此将新路线入队前需要先判断是否曾经入队。
             //朴素BFS
             if (source == target) return 0;
@@ -287,7 +282,7 @@ namespace Graph
                 int station = queue.Dequeue();
                 int step = visitedSet[station];
                 if (target == station) return step;
-                for (int i = 1; i <100; i++)
+                for (int i = 1; i < 100; i++)
                 {
                     //被记录过,跳过
                     if (visitedSet.ContainsKey(station)) continue;
@@ -299,77 +294,14 @@ namespace Graph
             return -1;
         }
 
-        //LCP 07. 传递信息
-        public int NumWays(int n, int[][] relation, int k)
-        {
-            //朴素BFS
-            int len = relation[0].Length;
-            Queue<int> queue = new Queue<int>();
-            queue.Enqueue(0);
-            Dictionary<int, int> visitedSet = new Dictionary<int, int>();
-            visitedSet.Add(1, 0);
-
-            while (queue.Any())
-            {
-                int position = queue.Dequeue();
-                int step = visitedSet[position];
-                if (position == len * len) return step;
-                for (int i = 1; i <= 6; i++)
-                {
-
-                }
-            }
-            return -1;
-        }
-
-        // 542. 01 矩阵
-        public int[][] UpdateMatrix(int[][] mat)
-        {
-            // 将所有0位置入队，1位置置-1
-            int m = mat.Length;
-            int n = mat[0].Length;
-            Queue<int[]> queue = new Queue<int[]>();
-            for (int i = 0; i < m; i++)
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    if (mat[i][j] == 0)
-                    {
-                        queue.Enqueue(new int[] { i, j });
-                    }
-                    else
-                    {
-                        mat[i][j] = -1;
-                    }
-                }
-            }
-
-            int[] dx = new int[] { -1, 1, 0, 0 };
-            int[] dy = new int[] { 0, 0, -1, 1 };
-            while (queue.Any())
-            {
-                int[] point = queue.Dequeue();
-                int x = point[0], y = point[1];
-                for (int i = 0; i < 4; i++)
-                {
-                    int newX = x + dx[i];
-                    int newY = y + dy[i];
-                    // 如果四邻域的点是 -1，表示这个点是未被访问过的 1
-                    // 所以这个点到 0 的距离就可以更新成 mat[x][y] + 1。
-                    if (newX >= 0 && newX < m && newY >= 0 && newY < n
-                            && mat[newX][newY] == -1)
-                    {
-                        mat[newX][newY] = mat[x][y] + 1;
-                        queue.Enqueue(new int[] { newX, newY });
-                    }
-                }
-            }
-            return mat;
-        }
+        
 
         #endregion
 
         #region 深度优先搜索 DFS
+        //设计好递归函数的「入参」和「出参」
+        //设置好递归函数的出口（Base Case）
+        //编写「最小单元」处理逻辑
 
         #endregion
     }

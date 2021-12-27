@@ -18,48 +18,11 @@ namespace LinkedList
             int[] arr1 = testCase.nums4;
             ListNode node1 = Knowleage.CreateListNodes(arr);
             ListNode node2 = Knowleage.CreateListNodes(arr1);
-            //problems.ReverseList(node1);
-            //Knowleage.PrintListNodes(head);
-            //Knowleage.PrintListNodes(resHead);
+            Knowleage.ReverseList(node2);
         }
     }
     class Problems
     {
-        public TreeNode SortedListToBST(ListNode head)
-        {
-            if (head == null)
-            {
-                return null;
-            }
-            int len = 0;
-            ListNode cur = head;
-            while (cur != null)
-            {
-                len++;
-                cur = cur.next;
-            }
-            int[] nums = new int[len];
-            cur = head;
-            for (int i = 0; i < len; i++)
-            {
-                nums[i] = cur.val;
-                cur = cur.next;
-            }
-            return creatrBST(0, len - 1);
-
-            TreeNode creatrBST(int left, int right)
-            {
-                if (right > left)
-                {
-                    return null;
-                }
-                int mid = left + ((right - left) >> 1);
-                TreeNode node = new TreeNode(nums[mid]);
-                node.left = creatrBST(left, mid - 1);
-                node.right = creatrBST(mid + 1, right);
-                return node;
-            }
-        }
         // 92. 反转链表 II
         public ListNode ReverseBetween(ListNode head, int left, int right)
         {
@@ -184,6 +147,10 @@ namespace LinkedList
             }
         }
 
+    }
+
+    class Knowleage
+    {
         // 链表常用方式，固定下来的解题：
         // head头结点要做操作的时候，通常定义一个dummy结点，其next结点指向头结点
 
@@ -195,40 +162,43 @@ namespace LinkedList
         //求链表的中间节点（一个一次走一步，另一个一次走两步，第一个结点走到末尾时，第一个结点的位置就是中间节点）
         //判断是否环形链表（一个一次走一步，另一个一次走两步,在第一个走到末尾的时候第二个结点能否追上第一个结点）
 
-        #region 双指针
-
-
-        //203. 移除链表元素
-        public ListNode RemoveElements(ListNode head, int val)
+        // 链表转为二叉树
+        public TreeNode SortedListToBST(ListNode head)
         {
-            //定义一个哑节点
-            var dummy = new ListNode();
-            dummy.next = head;
-            //定义一个
-            var temp = dummy;
-            while (temp.next != null)
-            {
-                if (temp.next.val == val)
-                    temp.next = temp.next.next;
-                else
-                    temp = temp.next;
-            }
-            return dummy.next;
-
-            //递归
-            //终止条件
             if (head == null)
+            {
                 return null;
-            head.next = RemoveElements(head.next, val);
-            return head.val == val ? head.next : head;
+            }
+            int len = 0;
+            ListNode cur = head;
+            while (cur != null)
+            {
+                len++;
+                cur = cur.next;
+            }
+            int[] nums = new int[len];
+            cur = head;
+            for (int i = 0; i < len; i++)
+            {
+                nums[i] = cur.val;
+                cur = cur.next;
+            }
+            return creatrBST(0, len - 1);
 
+            TreeNode creatrBST(int left, int right)
+            {
+                if (right > left)
+                {
+                    return null;
+                }
+                int mid = left + ((right - left) >> 1);
+                TreeNode node = new TreeNode(nums[mid]);
+                node.left = creatrBST(left, mid - 1);
+                node.right = creatrBST(mid + 1, right);
+                return node;
+            }
         }
-        #endregion
 
-    }
-
-    class Knowleage
-    {
         // 创建链表
         public static ListNode CreateListNodes(int[] nums)
         {
@@ -241,6 +211,7 @@ namespace LinkedList
             }
             return pre.next;
         }
+
         // 输出链表
         public static void PrintListNodes(ListNode head)
         {
@@ -260,7 +231,7 @@ namespace LinkedList
         }
 
         // 反转链表
-        public ListNode ReverseList(ListNode head)
+        public static ListNode ReverseList(ListNode head)
         {
             //if (head == null) return null;
             //ListNode preNode = null;
@@ -435,6 +406,7 @@ namespace LinkedList
             return cur1;
 
         }
+
         // 两个有环链表
         private static ListNode BothLoop(ListNode node1, ListNode node2, ListNode loop1, ListNode loop2)
         {
@@ -533,7 +505,6 @@ namespace LinkedList
             this.next = next;
             this.random = random;
         }
-
     }
 
     class TreeNode
