@@ -979,38 +979,6 @@ namespace Array
 
         #endregion
 
-        // 括号生成
-        public IList<string> GenerateParenthesis(int n)
-        {
-            List<string> res = new List<string>();
-            if (n == 0) return res;
-            dfs("", 0, 0);
-            return res;
-            // left:左括号的数量
-            // right:右括号的数量
-            void dfs(string str, int left, int right)
-            {
-                if (left == n && right == n)
-                {
-                    res.Add(str);
-                    return;
-                }
-                if (left < right)
-                {
-                    return;
-                }
-                if (left < n)
-                {
-                    dfs(str + "(", left + 1, right);
-                }
-                if (right < n)
-                {
-                    dfs(str + ")", left, right + 1);
-                }
-            }
-        }
-
-
 
         #endregion
 
@@ -1087,6 +1055,23 @@ namespace Array
                 }
             }
             return count;
+        }
+
+        // 盛最多水的容器
+        // 贪心 + 双指针
+        public int MaxArea(int[] height)
+        {
+            // 首先考虑最大宽度
+            int left = 0, right = height.Length - 1, res = 0;
+            while (left < right)
+            {
+                int h = Math.Min(height[left], height[right]), w = right - left;
+                res = Math.Max(res, h * w);
+                // 收缩宽度，考虑高度
+                if (height[left] < height[right]) left++;
+                else right--;
+            }
+            return res;
         }
         #endregion
 

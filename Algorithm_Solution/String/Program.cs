@@ -15,6 +15,12 @@ namespace String
 
     class Problem
     {
+
+
+
+    }
+    class Knowleage
+    {
         #region StringBuilder API使用
         // 1047. 删除字符串中的所有相邻重复项
         public string RemoveDuplicates(string s)
@@ -83,11 +89,49 @@ namespace String
                 }
             }
         }
+
+        // 所给字符串是否是数值
+        public bool IsNumber(string s)
+        {
+            if (s == null || s.Length == 0) return false;
+            var array = s.Trim().ToArray();
+            // 定义标签
+            bool numFlag = false;
+            bool eFlag = false;
+            bool dotFlag = false;
+            for (int i = 0; i < array.Length; i++)
+            {
+                // 遇到数字
+                if (array[i] >= '0' && array[i] <= '9') numFlag = true;
+                else if (array[i] == '.')
+                {
+                    // .之前不能出现.和e
+                    if (dotFlag || eFlag) return false;
+                    dotFlag = true;
+                }
+                else if (array[i] == 'e' || array[i] == 'E')
+                {
+                    // 小数可以是 46. / 46.7 / .46
+                    // e之前不能出现e,一定要出现数字（e后面可以跟+ - 1e-1表示1*0.1）
+                    if (eFlag || !numFlag) return false;
+                    eFlag = true;
+                    // 数字标记重置 (123e不是数值)
+                    numFlag = false;
+                }
+                else if (array[i] == '-' || array[i] == '+')
+                {
+                    // + - 只能出现在0位置或者e后面（出现在数字后面就变成表达式了！）
+                    if (i > 0 && array[i - 1] != 'e' && array[i - 1] != 'E') return false;
+                }
+                else
+                    // 其他不符合条件的情况
+                    return false;
+            }
+            return numFlag;
+        }
+
     }
-}
-
-class Knowleage
-{
 
 }
-}
+
+

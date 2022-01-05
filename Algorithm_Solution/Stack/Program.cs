@@ -62,8 +62,11 @@ namespace Stack
 
     class Knowleage
     {
+        // 求存在过的元素；没有存在过的使用哈希表
+        // key唯一
+
         #region 栈性质：先入后出
-         // 栈的应用：1、反转顺序；2、先处理后来进入的元素
+        // 栈的应用：1、反转顺序；2、先处理后来进入的元素
 
         // 反转栈中的元素
         // 返回 3 2 1 变成 返回 1 2 3
@@ -90,88 +93,7 @@ namespace Stack
         #endregion
 
         #region 特殊的数据结构--单调栈
-        // 单调栈专门解决Next Greater Number(模板一)
-        public int[] NextGreaterNumberOne(int[] nums)
-        {
-            int[] ans = new int[nums.Length]; // 存放答案的数组
-            Stack<int> s = new Stack<int>();
-            for (int i = nums.Length - 1; i >= 0; i--)
-            { // 倒着往栈⾥放
-                while (s.Any() && s.Peek() <= nums[i])
-                { // 判定个⼦⾼矮
-                    s.Pop(); // 小的出栈
-                }
-                ans[i] = s.Any() ? -1 : s.Peek(); // 这个元素⾝后的第⼀个⾼个
-                s.Push(nums[i]); // 进队，接受之后的⾝⾼判定吧！
-            }
-            return ans;
-        }
-
-        // 单调栈专门解决Next Greater Number(模板二-循环数组)
-        public int[] NextGreaterNumberTwo(int[] nums)
-        {
-            /*计算机的内存都是线性的，没有真正意义上的环形数组，但是我们可以模拟出环形数组的效果，一般是通过 % 运算符求模（余数），获得环形特效：
-            int[] arr = { 1, 2, 3, 4, 5 };
-            int n = arr.length, index = 0;
-            while (true) 
-            {
-                print(arr[index % n]);
-                index++;
-            }*/
-            int n = nums.Length;
-            int[] ans = new int[n]; // 存放答案的数组
-            Stack<int> s = new Stack<int>();
-            // 假装这个数组长度翻倍了
-            for (int i = 2 * n - 1; i >= 0; i--)
-            {
-                while (s.Any() && s.Peek() <= nums[i % n])
-                    s.Pop();
-                ans[i % n] = s.Any() ? -1 : s.Peek();
-                s.Push(nums[i % n]);
-            }
-            return ans;
-        }
-
-        // 496. 下一个更大元素 I
-        public int[] NextGreaterElement(int[] nums1, int[] nums2)
-        {
-            int[] ans = new int[nums1.Length];// 存放答案的数组
-            Dictionary<int, int> keyValues = new Dictionary<int, int>();
-            Stack<int> s = new Stack<int>();
-            for (int i = nums2.Length - 1; i >= 0; i--)
-            {// 倒着往栈⾥放
-                while (s.Any() && s.Peek() <= nums2[i])
-                {// 判定数字大小
-                    s.Pop();
-                }
-                //先用字典存放nums2中个数字下一个更大的元素
-                keyValues.Add(nums2[i], !s.Any() ? -1 : s.Peek());
-                s.Push(nums2[i]);
-            }
-            //将nums1与对应字典key的value赋值给ans
-            for (int i = 0; i < nums1.Length; i++)
-            {
-                ans[i] = keyValues[nums1[i]];
-            }
-            return ans;
-        }
-
-        // 503. 下一个更大元素 II ( 循环数组 )
-        public int[] NextGreaterElements(int[] nums)
-        {
-            int n = nums.Length;
-            int[] ans = new int[n]; // 存放答案的数组
-            Stack<int> s = new Stack<int>();
-            // 假装这个数组长度翻倍了
-            for (int i = 2 * n - 1; i >= 0; i--)
-            {
-                while (s.Any() && s.Peek() <= nums[i % n])
-                    s.Pop();
-                ans[i % n] = !s.Any() ? -1 : s.Peek();
-                s.Push(nums[i % n]);
-            }
-            return ans;
-        }
+        // 寻找任一个元素的右边或者左边第一个比自己大或者小的元素的位置
 
         // 739. 每日温度
         public int[] DailyTemperatures(int[] temperatures)
@@ -180,6 +102,7 @@ namespace Stack
             Stack<int> stack = new Stack<int>();
             for (int i = 0; i < temperatures.Length; i++)
             {
+                // 构建下标索引对应温度的递减栈（从栈顶到栈底）
                 int temp = temperatures[i];
                 if (stack.Any() && temp > temperatures[stack.Peek()])
                 {
@@ -192,15 +115,111 @@ namespace Stack
             return res;
         }
 
-        // 84. 柱状图中最大的矩形
+        // 503. 下一个更大元素 II ( 循环数组 ) 
+        public int[] NextGreaterElements(int[] nums)
+        {
+            // [1,2,1] => [1,2,1,1,2,1]
+            int n = nums.Length;
+            int[] ans = new int[n];
+            Stack<int> s = new Stack<int>();
+            // 假装这个数组长度翻倍了  模拟环形数组
+            for (int i = 2 * n - 1; i >= 0; i--)
+            {
+                // 只留比自己大的
+                while (s.Any() && s.Peek() <= nums[i % n])
+                    s.Pop();
+                ans[i % n] = !s.Any() ? -1 : s.Peek();
+                s.Push(nums[i % n]);
+            }
+            return ans;
+        }
+
+        // 接雨水 动态规划  按每列求值
+        public int Trap(int[] height)
+        {
+            // 动态规划 先求好每个下标对应左右两边的最高高度
+            if (height == null || height.Length == 0) return 0;
+            int len = height.Length;
+            // dp数组
+            var maxLeftH = new int[len];
+            var maxRightH = new int[len];
+            // 求每列左边最高的柱子高度
+            maxLeftH[0] = height[0];
+            for (int i = 1; i < height.Length - 1; i++)
+            {
+                maxLeftH[i] = Math.Max(height[i], maxLeftH[i - 1]);
+            }
+            // 求每列右边最高的柱子高度
+            maxRightH[len - 1] = height[len - 1];
+            for (int i = len - 2; i >= 1; i--)
+            {
+                maxRightH[i] = Math.Max(height[i], maxRightH[i + 1]);
+            }
+            // 首尾两端漏水，无法接水
+            int res = 0;
+            for (int i = 1; i < len - 1; i++)
+            {
+                int h = Math.Min(maxLeftH[i], maxRightH[i]) - height[i];
+                // 两边较小的一端高于当前列才能接雨水
+                if (h > 0) res += h;
+            }
+            return res;
+        }
+        // 接雨水 单调栈
+        public int TrapStack(int[] height)
+        {
+            int res = 0;
+            return res;
+        }
+
+        // 柱状图中最大的矩形 动态规划
         public int LargestRectangleArea(int[] heights)
+        {
+            if (heights == null || heights.Length == 0) return 0;
+            int len = heights.Length;
+            var minLeftIndex = new int[len];
+            var minRightIndex = new int[len];
+            // 记录每个柱子 左边第一个小于该柱子的下标
+            // 初始化第一个柱子
+            minLeftIndex[0] = -1;
+            for (int i = 1; i < len; i++)
+            {
+                int t = i - 1;
+                // 这里不是用if，而是不断向左寻找的过程
+                // 遇到左边比当前的柱子高的，就左移继续查找
+                while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];
+                minLeftIndex[i] = t;
+            }
+            // 初始化最后一个柱子
+            minRightIndex[len - 1] = len;
+            // 记录每个柱子 右边第一个小于该柱子的下标
+            for (int i = len - 2; i >= 0; i--)
+            {
+                int k = i + 1;
+                while (k < len && heights[k] >= heights[i]) k = minRightIndex[k];
+                minRightIndex[i] = k;
+            }
+            // 计算和
+            int res = 0;
+            for (int i = 0; i < len; i++)
+            {
+                // 为什么要用右边最小-左边最小？
+                // 因为前面进行的初始化 右边数组的值永远大于0
+                // 面积 = 当前柱子的高度 * 能形成的最大宽度
+                int area = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);
+                res = Math.Max(res, area);
+            }
+            return res;
+        }
+        // 84. 柱状图中最大的矩形 单调栈
+        public int LargestRectangleAreaStack(int[] heights)
         {
             if (heights == null || heights.Length <= 0) return 0;
             int max = 0;
             var stack = new Stack<int>();
             for (int i = 0; i < heights.Length + 1; ++i)
             {
-                while (stack.Count != 0 && ((i == heights.Length) || heights[i] < heights[stack.Peek()]))
+                while (stack.Any() && ((i == heights.Length) || heights[i] < heights[stack.Peek()]))
                 {
                     int height = heights[stack.Pop()];
                     int width = stack.Count == 0 ? i : i - stack.Peek() - 1;

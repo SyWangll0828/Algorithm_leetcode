@@ -21,7 +21,6 @@ namespace Math
             int[] res1 = new int[] { 1, 3 };
             int[] res2 = new int[] { 1, 2, 5, 2 };
 
-
             Console.ReadKey();
         }
     }
@@ -43,7 +42,6 @@ namespace Math
             return ans;
             //桶排序？
         }
-
 
         // 剑指 Offer 17. 打印从1到最大的n位数
         // 考虑大数问题
@@ -80,10 +78,54 @@ namespace Math
             return dp[n - 1];
         }
 
-        //任何大于1的数都可由2和3相加组成（根据奇偶证明）
-        //因为2*2=1*4，2*3>1*5, 所以将数字拆成2和3，能得到的积最大
-        //因为2*2*2<3*3, 所以3越多积越大
-        //343. 整数拆分
+    }
+
+    class Knowledge
+    {
+        // 判断一个数是否是素数(质数)
+        public static bool isPrime(int n)
+        {
+            if (n < 2) return false;
+            for (int i = 2; i * i <= n; i++)
+            {
+                if (n % i == 0) return false;
+            }
+            return true;
+        }
+
+        // 求一个数的所有正因数和
+        public static int getFactorSum(int num)
+        {
+            // 不包括自己本身
+            int res = 1;
+            for (int i = 2; i <= num / i; i++)
+            {
+                if ((num % i) == 0) res += i + num / i;
+            }
+            return res;
+        }
+
+        // 求0-n的比特位计数  
+        public int[] CountBits(int n)
+        {
+            var res = new int[n + 1];
+            // 偶数 为更小的数左移一位，增加了0的个数，1的个数不变
+            // 奇数，为比该奇数小一位的偶数1的个数+1
+            for (int i = 1; i <= n; i++)
+            {
+                if ((i & 1) == 0)
+                    res[i] = res[i / 2];
+                else
+                    res[i] = res[i - 1] + 1;
+            }
+            return res;
+        }
+
+        // 整数拆分最大乘积
+        // 任何大于1的数都可由2和3相加组成（根据奇偶证明）
+        // 因为2*2=1*4，2*3>1*5, 所以将数字拆成2和3，能得到的积最大
+        // 因为2*2*2<3*3, 所以3越多积越大
+        // 343. 整数拆分
         public int IntegerBreak(int n)
         {
             //n = 3a + b 数学推导
@@ -105,20 +147,53 @@ namespace Math
             return (int)(res * n);
         }
 
-        
-    }
-
-    class Knowledge
-    {
-        //判断一个数是否是素数(质数)
-        public static bool isPrime(int n)
+        // 第 N 位数字
+        public int findNthDigit(int n)
         {
-            if (n < 2) return false;
-            for (int i = 2; i * i <= n; i++)
+            if (n <= 9)
+                return n;
+            int digits = 1;
+            long begin = 1;
+            long count = 10;
+            long num = n;
+            while (num > count)
             {
-                if (n % i == 0) return false;
+                num -= count;
+                digits++;
+                begin *= 10;
+                count = digits * begin * 9;
             }
-            return true;
+            // 找到是在哪个digits位数的数上
+            long res = begin + num / digits;
+            // 在当前数上看是第几个位置的字符
+            return res.ToString()[(int)num % digits] - '0';
+        }
+
+        // 1～n 整数中 1 出现的次数
+        public int CountDigitOne(int n)
+        {
+            // 高低位
+            int high = n;
+            int low = 0;
+            // 当前位上的值
+            int cur = 0;
+            int res = 0;
+            // 位数 个位 十位 百位...
+            int num = 1;
+            // 高位与当前位从右往左移动
+            while (high != 0 || cur != 0)
+            {
+                cur = high % 10;
+                // 高位移动
+                high /= 10;
+                // 当前位与要统计的值（1）进行比较
+                if (cur == 0) res += high * num;
+                else if (cur == 1) res += (high * num + low + 1);
+                else res += (high + 1) * num;
+                low = cur * num + low;
+                num *= 10;
+            }
+            return res;
         }
 
         #region 位运算
