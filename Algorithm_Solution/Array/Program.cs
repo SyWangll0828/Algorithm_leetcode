@@ -209,51 +209,6 @@ namespace Array
 
     class Knowledge
     {
-        // 50. Pow(x, n)  实现自己的Pow函数
-        public double MyPow(double x, int n)
-        {
-            //折半考虑
-            //double res = 1.0;
-            //for (int i = n; i != 0; i /= 2)
-            //{
-            //    if (i % 2 != 0) res *= x;
-            //    x *= x;
-            //}
-            //return n < 0 ? 1 / res : res;
-
-            // int取值范围问题 此处要用-t来取到整形最小负数的取反数
-            long tempN = n;
-            if (tempN < 0)
-            {
-                tempN = -tempN;
-                x = 1 / x;
-            }
-            double res = 1.0;
-            // 模拟求指数次幂函数
-            while (tempN > 0)
-            {
-                //奇数，乘以一个x
-                if ((tempN & 1) == 1)
-                    res *= x;
-                x *= x;
-                tempN >>= 1;
-            }
-            return res;
-        }
-
-        // 原地翻转数组
-        public int[] Reverse(int[] nums)
-        {
-            int n = nums.Length;
-            for (int i = 0; i < n / 2; i++)
-            {
-                int temp = nums[i];
-                nums[i] = nums[n - 1 - i];
-                nums[n - 1 - i] = temp;
-            }
-            return nums;
-        }
-
         #region 双指针
         // 56. 合并区间
         public int[][] Merge(int[][] intervals)
@@ -716,18 +671,52 @@ namespace Array
             return f[k, n - 1];
         }
 
-        //剑指 Offer 62. 圆圈中最后剩下的数字 (约瑟夫环问题)
-        public int LastRemaining(int n, int m)
+        // 零钱兑换
+        // BFS版本
+        public int CoinChangeBFS(int[] coins, int amount)
         {
-            int ans = 0;
-            // 最后一轮剩下2个人，所以从2开始反推
-            for (int i = 2; i <= n; i++)
+            if (coins == null || coins.Length == 0 || amount <= 0) return 0;
+            Array.Sort(coins);
+            // 访问标记
+            var visited = new bool[amount + 1];
+            // 辅助队列，将每次换完钱的amount入队
+            var queue = new Queue<int>();
+            // 初始化
+            queue.Enqueue(amount);
+            int count = 1;
+            while (queue.Any())
             {
-                ans = (ans + m) % i;
+                // 将每一种可能进行零钱兑换
+                // 相当于一次扩散
+                int len = queue.Count;
+                for (int i = 0; i < len; i++)
+                {
+                    int val = queue.Dequeue();
+                    foreach (var item in coins)
+                    {
+                        int next = val - item;
+                        // 后续都是用更大的面值换，直接返回
+                        if (next < 0) break;
+                        // 找到图中的最短路径
+                        else if (next == 0) return count;
+                        else
+                        {
+                            // 可以换,打上标记，入队
+                            if (!visited[next])
+                            {
+                                visited[next] = true;
+                                queue.Enqueue(next);
+                            }
+                        }
+                    }
+                }
+                // 记录次数
+                count++;
             }
-            // 返回下标
-            return ans;
+            // 无法将amount全部兑换
+            return -1;
         }
+
         #endregion
 
         #region 回溯 DFS
@@ -1168,7 +1157,55 @@ namespace Array
             return res * n;
         }
 
+        // 50. Pow(x, n)  实现自己的Pow函数
+        // 快速幂
+        public double MyPow(double x, int n)
+        {
+            //折半考虑
+            //double res = 1.0;
+            //for (int i = n; i != 0; i /= 2)
+            //{
+            //    if (i % 2 != 0) res *= x;
+            //    x *= x;
+            //}
+            //return n < 0 ? 1 / res : res;
+
+            // int取值范围问题 此处要用-t来取到整形最小负数的取反数
+            long tempN = n;
+            if (tempN < 0)
+            {
+                tempN = -tempN;
+                x = 1 / x;
+            }
+            double res = 1.0;
+            // 模拟求指数次幂函数
+            while (tempN > 0)
+            {
+                //奇数，乘以一个x
+                if ((tempN & 1) == 1)
+                    res *= x;
+                x *= x;
+                tempN >>= 1;
+            }
+            return res;
+        }
+
         //快速幂 -- 分治思想
+
+        #endregion
+
+        #region 背包问题
+
+        #region 完全背包
+
+
+        #endregion
+
+        #region 01背包
+
+
+        #endregion
+
 
         #endregion
 

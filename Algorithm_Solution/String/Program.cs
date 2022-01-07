@@ -23,6 +23,7 @@ namespace String
     {
         #region StringBuilder API使用
         // 1047. 删除字符串中的所有相邻重复项
+        // remove 可以模拟缩小字符长度
         public string RemoveDuplicates(string s)
         {
             //StringBuilder可以充当栈
@@ -37,6 +38,24 @@ namespace String
             }
             return sb.ToString();
         }
+
+        // 简化路径
+        // 与Append 相反 Insert 可以在头部插入 与栈搭配使用模拟反转效果
+        public string SimplifyPath(string path)
+        {
+            if (path == null || path.Length == 0) return "";
+            var stack = new Stack<string>();
+            var array = path.Split('/');
+            for (int i = 1; i < array.Length; i++)
+            {
+                if (array[i] == ".." && stack.Any()) stack.Pop();
+                else if (array[i] != "." && array[i] != "" && array[i] != "..") stack.Push(array[i]);
+            }
+            var res = new StringBuilder();
+            while (stack.Any()) res.Insert(0, stack.Pop()).Insert(0, '/');
+            return res.Length == 0 ? "/" : res.ToString();
+        }
+
         #endregion
 
         // 通过自身旋转模拟指定长度字符旋转效果

@@ -285,6 +285,28 @@ namespace Tree
             }
         }
 
+        // 二叉树的最大直径（每个节点都去dfs看左右子树的最大深度和）
+        int max;
+        public int DiameterOfBinaryTree(TreeNode root)
+        {
+            // 每个节点都去dfs看左右子树的深度和，求最大值
+            if (root == null) return -1;
+            dfs(root);
+            return max;
+        }
+        public int dfs(TreeNode root)
+        {
+            // 左右子节点都不存在时，直接返回
+            if (root.left == null && root.right == null) return 0;
+            // 根据左右子节点是否存在进行递归或者终止 最后一层递归
+            int left = root.left != null ? dfs(root.left) + 1 : 0;
+            int right = root.right != null ? dfs(root.right) + 1 : 0;
+            // 更新每个节点左右子树深度和
+            max = Math.Max(max, left + right);
+            // 返回的是每个节点的左右深度最大值
+            return Math.Max(left, right);
+        }
+
         // 判断一个树是二叉搜索树
         // 中序遍历递增
         static long preValue = long.MinValue;

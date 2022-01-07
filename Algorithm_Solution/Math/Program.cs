@@ -78,6 +78,19 @@ namespace Math
             return dp[n - 1];
         }
 
+        //剑指 Offer 62. 圆圈中最后剩下的数字 (约瑟夫环问题)
+        public int LastRemaining(int n, int m)
+        {
+            int ans = 0;
+            // 最后一轮剩下2个人，所以从2开始反推
+            for (int i = 2; i <= n; i++)
+            {
+                ans = (ans + m) % i;
+            }
+            // 返回下标
+            return ans;
+        }
+
     }
 
     class Knowledge
