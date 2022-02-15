@@ -205,6 +205,40 @@ namespace Array
             return res;
         }
 
+        // 矩阵模拟
+        // 数据范围小的，可以考虑直接用范围+1的长度定义数据结构
+        public IList<int> LuckyNumbers(int[][] matrix)
+        {
+            int m = matrix.Length;
+            int n = matrix[0].Length;
+            // 开两个足够空间的数组
+            var min = new int[51];
+            var max = new int[51];
+            for (int i = 0; i < m; i++)
+            {
+                // 行中最小，列中最大
+                // 比较最小需要先设置最大值
+                min[i] = 100001;
+                for (int j = 0; j < n; j++)
+                {
+                    // 用数组更新记录行最小值与列最大值
+                    min[i] = Math.Min(min[i], matrix[i][j]);
+                    max[j] = Math.Max(max[j], matrix[i][j]);
+                }
+            }
+            var res = new List<int>();
+            for (int i = 0; i < m; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    int t = matrix[i][j];
+                    if (t == min[i] && t == max[i])
+                        res.Add(t);
+                }
+            }
+            return res;
+        }
+
     }
 
     class Knowledge
@@ -236,6 +270,28 @@ namespace Array
             res.Add(new int[] { start, intervals[intervals.Length - 1][1] });
             return res.ToArray();
         }
+
+        // 双指针维护最大值与次大值模板
+        public int DominantIndex(int[] nums)
+        {
+            if (nums == null || nums.Length == 0) return -1;
+            if (nums.Length == 1) return 0;
+            // 遍历维护最大值和次大值的下标
+            int a = -1, b = 0;
+            for (int i = 1; i < nums.Length; i++)
+            {
+                // 遇到比b下标还大的数，则同时更新a,b下标的位置
+                if (nums[i] > nums[b])
+                {
+                    a = b;
+                    b = i;
+                }
+                // a下标都是比b下标小的数
+                else if (a == -1 || nums[i] > nums[a]) a = i;
+            }
+            return nums[a] * 2 > nums[b] ? -1 : b;
+        }
+
 
         #endregion
 
@@ -671,51 +727,7 @@ namespace Array
             return f[k, n - 1];
         }
 
-        // 零钱兑换
-        // BFS版本
-        public int CoinChangeBFS(int[] coins, int amount)
-        {
-            if (coins == null || coins.Length == 0 || amount <= 0) return 0;
-            Array.Sort(coins);
-            // 访问标记
-            var visited = new bool[amount + 1];
-            // 辅助队列，将每次换完钱的amount入队
-            var queue = new Queue<int>();
-            // 初始化
-            queue.Enqueue(amount);
-            int count = 1;
-            while (queue.Any())
-            {
-                // 将每一种可能进行零钱兑换
-                // 相当于一次扩散
-                int len = queue.Count;
-                for (int i = 0; i < len; i++)
-                {
-                    int val = queue.Dequeue();
-                    foreach (var item in coins)
-                    {
-                        int next = val - item;
-                        // 后续都是用更大的面值换，直接返回
-                        if (next < 0) break;
-                        // 找到图中的最短路径
-                        else if (next == 0) return count;
-                        else
-                        {
-                            // 可以换,打上标记，入队
-                            if (!visited[next])
-                            {
-                                visited[next] = true;
-                                queue.Enqueue(next);
-                            }
-                        }
-                    }
-                }
-                // 记录次数
-                count++;
-            }
-            // 无法将amount全部兑换
-            return -1;
-        }
+
 
         #endregion
 
@@ -1044,6 +1056,18 @@ namespace Array
                 }
             }
             return count;
+
+            // 方法二 贪心经典题
+            // 下标+值与最后一个元素进行比较
+            //if (nums == null || nums.Length == 0) return false;
+            //if (nums.Length == 1) return true;
+            //int coverRange = 0;
+            //for (int i = 0; i <= coverRange; i++)
+            //{
+            //    coverRange = Math.Max(i + nums[i], coverRange);
+            //    if (coverRange >= nums.Length - 1) return true;
+            //}
+            //return false;
         }
 
         // 盛最多水的容器
@@ -1061,6 +1085,53 @@ namespace Array
                 else right--;
             }
             return res;
+        }
+
+
+        // 零钱兑换
+        // BFS版本
+        public int CoinChangeBFS(int[] coins, int amount)
+        {
+            if (coins == null || coins.Length == 0 || amount <= 0) return 0;
+            System.Array.Sort(coins);
+            // 访问标记
+            var visited = new bool[amount + 1];
+            // 辅助队列，将每次换完钱的amount入队
+            var queue = new Queue<int>();
+            // 初始化
+            queue.Enqueue(amount);
+            int count = 1;
+            while (queue.Any())
+            {
+                // 将每一种可能进行零钱兑换
+                // 相当于一次扩散
+                int len = queue.Count;
+                for (int i = 0; i < len; i++)
+                {
+                    int val = queue.Dequeue();
+                    foreach (var item in coins)
+                    {
+                        int next = val - item;
+                        // 后续都是用更大的面值换，直接返回
+                        if (next < 0) break;
+                        // 找到图中的最短路径
+                        else if (next == 0) return count;
+                        else
+                        {
+                            // 可以换,打上标记，入队
+                            if (!visited[next])
+                            {
+                                visited[next] = true;
+                                queue.Enqueue(next);
+                            }
+                        }
+                    }
+                }
+                // 记录次数
+                count++;
+            }
+            // 无法将amount全部兑换
+            return -1;
         }
         #endregion
 

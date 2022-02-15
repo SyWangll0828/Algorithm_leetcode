@@ -26,7 +26,7 @@ namespace Sort
 
             int[] test = testCase.RandomArray();
             int[] res = new int[] { 7, 5, 6, 4, 8, 10, 0, 6, 9 };
-            SortSolution.BubbleSort(res);
+            BubbleSort.bubbleSort(res);
             if (BaseFunc.isSorted(res))
                 BaseFunc.Print(res);
             else
@@ -34,9 +34,7 @@ namespace Sort
 
             Type t = typeof(Knowledge);
             Type t2 = typeof(BaseFunc);
-            SortSolution.Merge(test, 0, test.Length - 1);
-            //int n = Knowledge.SortSolution.ReversePairs(res);
-            //Console.WriteLine(problems.RestoreString(testCase.s, testCase.index));
+
             Console.ReadKey();
 
         }
@@ -136,41 +134,6 @@ namespace Sort
                 }
             }
 
-            public static void BubbleSort(int[] para)
-            {
-                for (int i = 0; i < para.Length; i++)
-                {
-                    for (int j = para.Length - 1; j >= i; j--)
-                    {
-                        if (para[j] > para[j + 1])
-                        {
-                            BaseFunc.exch(para, j, j + 1);
-                        }
-                    }
-                }
-            }
-
-            //冒泡排序
-            //从左边开始比较，较大的往后移
-            //public static void BubbleSort(int[] paras)
-            //{
-            //    //特判
-            //    if (paras == null || paras.Length < 2)
-            //    {
-            //        return;
-            //    }
-            //    //在0-->n-1上比较
-            //    //在0-->n-2上比较
-            //    for (int i = paras.Length - 1; i > 0; i--)
-            //    {
-            //        for (int j = 0; j < i; j++)
-            //        {
-            //            if (paras[j] > paras[j + 1])
-            //                BaseFunc.exch(paras, i, j);
-            //        }
-            //    }
-            //}
-
             //插入排序
             //从下标1的元素开始与前一个元素进行比较，将元素插入到已经排序好的数组适当位置中
             public static void InsertSort(int[] paras)
@@ -209,188 +172,6 @@ namespace Sort
             }
             #endregion
 
-            #region 其他排序
-            //归并排序
-            public static void Merge(int[] paras, int left, int right)
-            {
-                //特判
-                if (paras == null || paras.Length < 2)
-                {
-                    return;
-                }
-                if (left >= right) return;
-                // 分成两半
-                int mid = left + (right - left) / 2;
-                // 左边排序
-                Merge(paras, left, mid);
-                // 右边排序
-                Merge(paras, mid + 1, right);
-
-                MergeSort(left, mid, right);
-
-                // 原地归并
-                void MergeSort(int l, int m, int r)
-                {
-                    int[] temp = new int[r - l + 1];
-                    int i = 0;
-                    int p1 = l;
-                    int p2 = m + 1;
-                    while (p1 <= m && p2 <= r)
-                    {
-                        temp[i++] = paras[p1] <= paras[p2] ? paras[p1++] : paras[p2++];
-                    }
-                    while (p1 <= m)
-                    {
-                        temp[i++] = paras[p1++];
-                    }
-                    while (p2 <= r)
-                    {
-                        temp[i++] = paras[p2++];
-                    }
-                    //从辅助数组输出到原数组
-                    for (int k = 0; k < temp.Length; k++)
-                    {
-                        paras[l + k] = temp[k];
-                    }
-                }
-            }
-
-            // 快速排序 1.0 左边小于等于中心点的数；右边大于中心点的数
-            public static void Quick(int[] paras, int l, int r)
-            {
-                if (l >= r) return;
-                int mid = quickSort(l, r);
-                Quick(paras, l, mid - 1);
-                Quick(paras, mid + 1, r);
-
-                int quickSort(int leftBound, int rightBound)
-                {
-                    //选取最右边元素为中心点
-                    int pivot = paras[rightBound];
-                    //从左边界从左向右寻找第一个比中心点大的数
-                    int left = leftBound;
-                    //从中心点之前的一个元素开始从右向左寻找第一个比中心点小的数
-                    int right = rightBound - 1;
-                    //注意要考虑左边界和右边界相等的情况
-                    //当指向同一个下标时需要再次进入一次循环
-                    while (left <= right)
-                    {
-                        //<=操作 便于跳出循环
-                        while (left <= right && paras[left] <= pivot) left++;
-                        while (left <= right && paras[right] > pivot) right--;
-                        //Console.WriteLine($"before:left={left},right={right}");
-                        //BaseFunc.Print(paras);
-                        if (left < right)
-                            BaseFunc.exch(paras, left, right);
-                        //Console.WriteLine("交换后");
-                        //BaseFunc.Print(paras);
-                    }
-                    //最后中心点的值和左右下标相聚时的值进行交换
-                    BaseFunc.exch(paras, left, rightBound);
-                    //BaseFunc.Print(paras);
-                    //返回新的中心点值
-                    return left;
-                }
-            }
-
-            // 随机快排 3.0
-            public static void RandomQuick(int[] paras, int l, int r)
-            {
-                if (l >= r) return;
-                Random random = new Random();
-                // 随机选取一个数字和最右边值进行交换
-                BaseFunc.exch(paras, (int)(random.NextDouble() * (r - l + 1)), r);
-                int[] p = partition(l, r);
-                Quick(paras, l, p[0] - 1);
-                Quick(paras, p[1] + 1, r);
-
-                int[] partition(int left, int right)
-                {
-                    // >划分值左边界
-                    int less = left - 1;
-                    int more = right;
-                    while (left < more)
-                    {
-                        // 当前数<划分值
-                        if (paras[left] < paras[right])
-                        {
-                            BaseFunc.exch(paras, ++less, left++);
-                        }
-                        else if (paras[left] > paras[right])
-                        {
-                            BaseFunc.exch(paras, --more, left);
-                        }
-                        else
-                            left++;
-                    }
-                    BaseFunc.exch(paras, more, right);
-                    return new int[] { less + 1, more };
-                }
-            }
-
-            // 堆排序
-            // 当前节点下标 index 父节点: (index-1)/2 左子: index*2+1 右子: index*2+2
-            public static void HeapSort(int[] paras)
-            {
-                //特判
-                if (paras == null || paras.Length < 2)
-                {
-                    return;
-                }
-                // 使数组变成大根堆 方式一 从头开始
-                //for (int i = 0; i < paras.Length; i++)
-                //{
-                //    // O(logN)
-                //    heapInsert(i);
-                //}
-                // 使数组变成大根堆 方式二 从叶子节点开始
-                for (int i = paras.Length - 1; i >= 0; i--)
-                {
-                    // O(N)
-                    heapify(paras, i, paras.Length);
-                }
-                int heapSize = paras.Length;
-                BaseFunc.exch(paras, 0, --heapSize);
-                while (heapSize > 0)
-                {
-                    // O(logN)
-                    heapify(paras, 0, heapSize);
-                    BaseFunc.exch(paras, 0, --heapSize);
-                }
-
-                // 子和父进行比较
-                void heapInsert(int[] arr, int index)
-                {
-                    while (arr[index] > arr[(index - 1) / 2])
-                    {
-                        BaseFunc.exch(arr, index, (index - 1) / 2);
-                        index = (index - 1) / 2;
-                    }
-                }
-
-                // 堆化
-                void heapify(int[] arr, int index, int size)
-                {
-                    // 左孩子的下标
-                    int left = index * 2 + 1;
-                    // 下方还有孩子的时候
-                    while (left < size)
-                    {
-                        // 左右孩子中，把大的值下标给largest
-                        int largest = left + 1 < size && arr[left + 1] > arr[left] ? left + 1 : left;
-                        // 孩子的最大值与父比较
-                        largest = arr[largest] > arr[index] ? largest : index;
-                        if (largest == index)
-                        {
-                            break;
-                        }
-                        BaseFunc.exch(arr, index, largest);
-                        index = largest;
-                        left = index * 2 + 1;
-                    }
-                }
-            }
-
             // 桶排序
             public static void bucketSort(int[] paras)
             {
@@ -398,7 +179,217 @@ namespace Sort
                 int right = paras.Length - 1;
             }
         }
-        #endregion
     }
 
+    class BubbleSort
+    {
+        public static void bubbleSort(int[] para)
+        {
+            for (int i = 0; i < para.Length; i++)
+            {
+                for (int j = para.Length - 1; j >= i; j--)
+                {
+                    if (para[j] > para[j + 1])
+                    {
+                        BaseFunc.exch(para, j, j + 1);
+                    }
+                }
+            }
+        }
+    }
+
+    class MergeSort
+    {
+        // 归并排序
+        public void merge(int[] nums, int left, int right)
+        {
+            if (left >= right) return;
+            int mid = left + ((right - left) >> 1);
+            // 分为左右两半，分到只剩两个数为止（分到一个数时直接返回）
+            merge(nums, left, mid);
+            merge(nums, mid + 1, right);
+            // 进入排序，开始合并
+            mergeSort(nums, left, mid, right);
+        }
+
+        public void mergeSort(int[] nums, int left, int mid, int right)
+        {
+            // 定义一个存放排序结果的辅助数组
+            var temp = new int[right - left + 1];
+            // p1 p2双指针移动比较大小
+            // p2为上一步分之后的第一个起点,mid为上一步分开的位置
+            // p1的范围为上一步分的长度
+            int index = 0, p1 = left, p2 = mid + 1;
+            while (p1 <= mid && p2 <= right)
+            {
+                if (nums[p1] <= nums[p2])
+                {
+                    temp[index++] = nums[p1++];
+                }
+                else // nums[p1]>nums[p2]
+                {
+                    // 逆序对个数统计（p1位于左边一端，p2位于右边一端）
+                    // 在左边排序好的一段中，p1指向的大于p2指向的数，则p1到mid之间的数都大于p2指向的数
+                    // maxCount += (mid - p1 + 1);
+                    temp[index++] = nums[p2++];
+                }
+            }
+            while (p1 <= mid)
+            {
+                temp[index++] = nums[p1++];
+            }
+            while (p2 <= right)
+            {
+                temp[index++] = nums[p2++];
+            }
+            // 用辅助数组排序原数组
+            for (int k = 0; k < temp.Length; k++)
+            {
+                nums[left + k] = temp[k];
+            }
+        }
+    }
+
+    class QuickSort
+    {
+        // 快速排序 1.0 左边小于等于中心点的数；右边大于中心点的数
+        public static void Quick(int[] paras, int l, int r)
+        {
+            if (l >= r) return;
+            int mid = quickSort(l, r);
+            Quick(paras, l, mid - 1);
+            Quick(paras, mid + 1, r);
+
+            int quickSort(int leftBound, int rightBound)
+            {
+                //选取最右边元素为中心点
+                int pivot = paras[rightBound];
+                //从左边界从左向右寻找第一个比中心点大的数
+                int left = leftBound;
+                //从中心点之前的一个元素开始从右向左寻找第一个比中心点小的数
+                int right = rightBound - 1;
+                //注意要考虑左边界和右边界相等的情况
+                //当指向同一个下标时需要再次进入一次循环
+                while (left <= right)
+                {
+                    //<=操作 便于跳出循环
+                    while (left <= right && paras[left] <= pivot) left++;
+                    while (left <= right && paras[right] > pivot) right--;
+                    //Console.WriteLine($"before:left={left},right={right}");
+                    //BaseFunc.Print(paras);
+                    if (left < right)
+                        BaseFunc.exch(paras, left, right);
+                    //Console.WriteLine("交换后");
+                    //BaseFunc.Print(paras);
+                }
+                //最后中心点的值和左右下标相聚时的值进行交换
+                BaseFunc.exch(paras, left, rightBound);
+                //BaseFunc.Print(paras);
+                //返回新的中心点值
+                return left;
+            }
+        }
+
+        // 随机快排 3.0
+        public static void RandomQuick(int[] paras, int l, int r)
+        {
+            if (l >= r) return;
+            Random random = new Random();
+            // 随机选取一个数字和最右边值进行交换
+            BaseFunc.exch(paras, (int)(random.NextDouble() * (r - l + 1)), r);
+            int[] p = partition(l, r);
+            Quick(paras, l, p[0] - 1);
+            Quick(paras, p[1] + 1, r);
+
+            int[] partition(int left, int right)
+            {
+                // >划分值左边界
+                int less = left - 1;
+                int more = right;
+                while (left < more)
+                {
+                    // 当前数<划分值
+                    if (paras[left] < paras[right])
+                    {
+                        BaseFunc.exch(paras, ++less, left++);
+                    }
+                    else if (paras[left] > paras[right])
+                    {
+                        BaseFunc.exch(paras, --more, left);
+                    }
+                    else
+                        left++;
+                }
+                BaseFunc.exch(paras, more, right);
+                return new int[] { less + 1, more };
+            }
+        }
+    }
+
+    class HeapSort
+    {
+        // 堆排序
+        // 当前节点下标 index 父节点: (index-1)/2 左子: index*2+1 右子: index*2+2
+        public static void heapSort(int[] paras)
+        {
+            //特判
+            if (paras == null || paras.Length < 2)
+            {
+                return;
+            }
+            // 使数组变成大根堆 方式一 从头开始
+            //for (int i = 0; i < paras.Length; i++)
+            //{
+            //    // O(logN)
+            //    heapInsert(i);
+            //}
+            // 使数组变成大根堆 方式二 从叶子节点开始
+            for (int i = paras.Length - 1; i >= 0; i--)
+            {
+                // O(N)
+                heapify(paras, i, paras.Length);
+            }
+            int heapSize = paras.Length;
+            BaseFunc.exch(paras, 0, --heapSize);
+            while (heapSize > 0)
+            {
+                // O(logN)
+                heapify(paras, 0, heapSize);
+                BaseFunc.exch(paras, 0, --heapSize);
+            }
+
+            // 子和父进行比较
+            void heapInsert(int[] arr, int index)
+            {
+                while (arr[index] > arr[(index - 1) / 2])
+                {
+                    BaseFunc.exch(arr, index, (index - 1) / 2);
+                    index = (index - 1) / 2;
+                }
+            }
+
+            // 堆化
+            void heapify(int[] arr, int index, int size)
+            {
+                // 左孩子的下标
+                int left = index * 2 + 1;
+                // 下方还有孩子的时候
+                while (left < size)
+                {
+                    // 左右孩子中，把大的值下标给largest
+                    int largest = left + 1 < size && arr[left + 1] > arr[left] ? left + 1 : left;
+                    // 孩子的最大值与父比较
+                    largest = arr[largest] > arr[index] ? largest : index;
+                    if (largest == index)
+                    {
+                        break;
+                    }
+                    BaseFunc.exch(arr, index, largest);
+                    index = largest;
+                    left = index * 2 + 1;
+                }
+            }
+        }
+
+    }
 }

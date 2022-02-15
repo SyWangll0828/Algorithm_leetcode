@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace String
@@ -10,17 +11,74 @@ namespace String
     {
         static void Main(string[] args)
         {
+
+            string pattern = "(Mr\\.?|Mrs\\.?|Miss|Ms\\.?)";
+            string[] names = { "Mr. Henry Hunt", "Ms. Sara Samuels",
+                         "Abraham Adams", "Ms. Nicole Norris" };
+
+            foreach (var item in names)
+            {
+                Console.WriteLine(Regex.Replace(item, pattern, string.Empty));
+            }
         }
     }
 
     class Problem
     {
+        // 根据条件模拟
+        // 将字符串转换为整数
+        public int StrToInt(string str)
+        {
+            if (string.IsNullOrEmpty(str)) return 0;
+            int len = str.Length;
+            int index = 0;
+            int res = 0;
+            bool isNegtive = false;
+            // 去除左边的空格
+            while (index < len && str[index] == ' ') index++;
+            if (index == len - 1) return 0;
 
+            // 判断正负
+            if (str[index] == '-') isNegtive = true;
+            // 判断完之后需要进一位
+            if (str[index] == '-' || str[index] == '+') index++;
 
-
+            // 读取适当大小范围的数字
+            while (index < len && str[index] >= '0' && str[index] <= '9')
+            {
+                int temp = str[index] - '0';
+                // 最大值 2147483647  最小值 -2147483648
+                // 通过 214748364 来判断下一步是否越界
+                if (!isNegtive && (res > 214748364 || (res == 214748364 && temp >= 7))) return int.MaxValue;
+                if (isNegtive && (-res < -214748364 || (-res == -214748364 && temp >= 8))) return int.MinValue;
+                res = res * 10 + temp;
+                index++;
+            }
+            if (isNegtive) return -res;
+            return res;
+        }
     }
     class Knowleage
     {
+        #region 正则表达式
+        public int CountValidWords(string sentence)
+        {
+            var tokens = sentence.Split(' ');
+            int ans = 0;
+            foreach (var item in tokens)
+            {
+                // 其中用 () 和 | 把正则中间部分分成两种情况，实际可以当成两个正则：^[,.!]$ 与 ^[a-z]+(-[a-z]+)?[,.!]?$
+                // 要匹配完整的token：用 ^ 表示匹配到字符串起始位置，用 $ 表示匹配到字符串末尾
+                // token只有1个标点符号，即第一种情况 ^[,.!]$ ，表示整个字符串是3个标点中任意1个
+                // token有字母的情况下，即第二种情况 ^[a - z] + (-[a - z] +)?[,.!] ?$
+                // 一定是1个或多个字母开头即 ^[a - z] +，后面可能有连字符 - 和字母即(-[a - z] +) ?，末尾可能有标点即[,.!] ?$
+
+                if (Regex.IsMatch(item, "^([,.!]|[a-z]+(-[a-z]+)?[,.!]?)$")) ans++;
+            }
+            return ans;
+        }
+        #endregion
+
         #region StringBuilder API使用
         // 1047. 删除字符串中的所有相邻重复项
         // remove 可以模拟缩小字符长度

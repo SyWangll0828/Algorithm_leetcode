@@ -91,6 +91,26 @@ namespace Math
             return ans;
         }
 
+        // 最小时间差(用记录隔天的时间来处理时间差)
+        public int FindMinDifference(IList<string> timePoints)
+        {
+            // 特判 总共就1439种时间 不然就是存在重复时间 
+            if (timePoints.Count >= 1440) return 0;
+            int[] temp = new int[timePoints.Count * 2];
+            // 记录当天时间分钟和隔天之后的分钟
+            for (int i = 0, index = 0; i < timePoints.Count; i++, index += 2)
+            {
+                var arr = timePoints[i].Split(':');
+                int h = int.Parse(arr[0]), min = int.Parse(arr[1]);
+                temp[index] = h * 60 + min;
+                temp[index + 1] = temp[index] + 1440;
+            }
+            Array.Sort(temp);
+            int res = temp[1] - temp[0];
+            for (int i = 1; i < temp.Length; i++) res = System.Math.Min(res, temp[i] - temp[i - 1]);
+            return res;
+        }
+
     }
 
     class Knowledge
