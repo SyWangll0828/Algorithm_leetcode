@@ -24,32 +24,34 @@ namespace Array
             //aInt[1] = new int[] { 6 };
             int[,] ab2 = new int[,] { { 5, 4, 4 }, { 6, 5, 6 } };
             int[] test = new int[] { 1, 2, 3, 3, 4, 5 };
+            int[] test2 = new int[] { 4, 3, 2, 7, 8, 2, 3, 1 };
 
+            problems.findDuplicates(test2);
             Console.ReadKey();
         }
     }
 
     class Problems
     {
-        // 超级次方  todo 
-        public int SuperPow(int a, int[] b)
+        #region 原地修改数组
+        public List<int> findDuplicates(int[] nums)
         {
-            StringBuilder str = new StringBuilder();
-            foreach (var item in b)
+            List<int> duplicates = new List<int>();
+            int n = nums.Length;
+            for (int i = 0; i < n; i++)
             {
-                str.Append(item.ToString());
+                int num = nums[i];
+                int index = Math.Abs(num) - 1;
+                if (nums[index] > 0)
+                {
+                    nums[index] = -nums[index];
+                }
+                else
+                {
+                    duplicates.Add(index + 1);
+                }
             }
-            if (!long.TryParse(str.ToString(), out long num))
-                return -1;
-            int res = 1;
-            while (num > 0)
-            {
-                if ((num & 1) == 1)
-                    res *= a;
-                a *= a;
-                num >>= 1;
-            }
-            return res;
+            return duplicates;
         }
 
         public IList<int> FindDisappearedNumbers(int[] nums)
@@ -66,6 +68,41 @@ namespace Array
             {
                 if (nums[i] > 0)
                     res.Add(i + 1);
+            }
+            return res;
+        }
+        #endregion
+
+        // 重复次数最多的数 的最短子数组长度
+        public int FindShortestSubArray(int[] nums)
+        {
+            // 求数组的度
+            // 左右字典存各数字出现得首位置和尾位置
+            var dic = new Dictionary<int, int>();
+            var left = new Dictionary<int, int>();
+            var right = new Dictionary<int, int>();
+            int len = nums.Length;
+            for (int i = 0; i < len; i++)
+            {
+                if (dic.ContainsKey(nums[i]))
+                {
+                    dic[nums[i]]++;
+                    right[nums[i]] = i;
+                }
+                else
+                {
+                    dic.Add(nums[i], 1);
+                    left.Add(nums[i], i);
+                    right.Add(nums[i], i);
+                }
+            }
+            // 与数组具有相同度的最短子数组的长度
+            // 求相同度得数字出现得首位置和尾位置得最小长度
+            int res = len;
+            foreach (var item in dic)
+            {
+                if (item.Value == dic.Values.Max())
+                    res = Math.Min(right[item.Key] - left[item.Key] + 1, res);
             }
             return res;
         }
@@ -134,55 +171,7 @@ namespace Array
             return list.Count;
         }
 
-        // 基于随机快速排序
-        public int[] GetLeastNumbers(int[] arr, int k)
-        {
-            // 快速排序
-            quickSort(0, arr.Length - 1);
-            int[] res = new int[k];
-            for (int i = 0; i < k; i++)
-            {
-                res[i] = arr[i];
-            }
-            return res;
-
-            void quickSort(int left, int right)
-            {
-                if (left >= right)
-                {
-                    return;
-                }
-                int l = left;
-                int r = right;
-                while (l < r)
-                {
-                    // 因为是选取左边第一个数作为基数，若是选取最后一个数作为基数，则先从左边开始找
-                    // 先从右边开始找第一个比基数小的数
-                    while (arr[r] >= arr[left] && l < r)
-                    {
-                        r--;
-                    }
-                    // 然后从左边找第一个比基数大的数
-                    while (arr[l] <= arr[left] && l < r)
-                    {
-                        l++;
-                    }
-                    swap(l, r);
-                }
-                // 交换中间数与基数的位置
-                // 基数左边都是小于基数的数；右边都是大于基数的数
-                swap(left, l);
-                quickSort(left, l - 1);
-                quickSort(l + 1, right);
-            }
-
-            void swap(int a, int b)
-            {
-                int t = arr[a];
-                arr[a] = arr[b];
-                arr[b] = t;
-            }
-        }
+        
 
         public int[] SearchInsert(int[] nums)
         {
@@ -243,6 +232,32 @@ namespace Array
 
     class Knowledge
     {
+        #region 哈希表
+        // 缺失的第一个正数
+        // 哈希表也是数组
+        public int FirstMissingPositive(int[] nums)
+        {
+            // 原地哈希，把数值为i的数映射到i-1的索引处
+            int len = nums.Length;
+            for (int i = 0; i < len; i++)
+            {
+                // 值在[1,len]区间内才需要进行交换
+                while (nums[i] >= 1 && nums[i] <= len && nums[i] != nums[nums[i] - 1])
+                {
+                    int num = nums[i];
+                    nums[i] = nums[num - 1];
+                    nums[num - 1] = num;
+                }
+            }
+            for (int i = 0; i < len; i++)
+            {
+                if (nums[i] != i + 1)
+                    return i + 1;
+            }
+            return len + 1;
+        }
+        #endregion
+
         #region 双指针
         // 56. 合并区间
         public int[][] Merge(int[][] intervals)
@@ -538,6 +553,30 @@ namespace Array
         #endregion
 
         #region 动态规划
+
+        // 简单构建杨辉三角
+        public IList<IList<int>> Generate(int numRows)
+        {
+            var res = new List<IList<int>>();
+            for (int i = 0; i < numRows; i++)
+            {
+                var list = new List<int>();
+                for (int j = 0; j < i + 1; j++)
+                {
+                    if (j == 0 || j == i) list.Add(1);
+                    else
+                    {
+                        int num = res[i - 1][j - 1] + res[i - 1][j];
+                        list.Add(num);
+                    }
+
+                }
+                res.Add(list);
+            }
+            return res;
+        }
+
+
         //1、确定dp数组（dp table）以及下标的含义
         //2、确定状态转移方程
         //3、dp数组如何初始化
@@ -607,8 +646,7 @@ namespace Array
             int[] dpMax = new int[len];
             //dp1表示下标为i结尾的最小值
             int[] dpMin = new int[len];
-            dpMax[0] = nums[0];
-            dpMin[0] = nums[0];
+            dpMax[0] = dpMin[0] = nums[0];
             //递推公式
             for (int i = 1; i < len; i++)
             {
@@ -1136,6 +1174,37 @@ namespace Array
         #endregion
 
         #region 前缀和
+        // 计算前缀和数组
+
+        // 寻找中心坐标的位置（左右两侧数组和相同，返回该索引下标）
+        public int PivotIndex(int[] nums)
+        {
+            // 将数组分成左右两部分，遍历一遍数组查找是否存在中心坐标
+            int sumLeft = 0, sumRight = nums.Sum();
+            for (int i = 0; i < nums.Length; i++)
+            {
+                sumRight -= nums[i];
+                if (sumLeft == sumRight) return i;
+                sumLeft += nums[i];
+            }
+            return -1;
+        }
+
+        // 和为K的子数组
+        public int SubarraySum(int[] nums, int k)
+        {
+            int res = 0;
+            if (nums == null || nums.Length == 0) return res;
+            int sum = nums[0];
+            int sumLeft = 0, sumRight = nums.Length - 1;
+            while (sumLeft < nums.Length)
+            {
+
+            }
+
+            return res;
+        }
+
         // 前缀和记录元素乘积
         public int[] ConstructArr(int[] array)
         {

@@ -20,6 +20,12 @@ namespace String
             {
                 Console.WriteLine(Regex.Replace(item, pattern, string.Empty));
             }
+
+            var know = new Knowleage();
+
+            var arr = new int[] { 3, 4, -1, 1 };
+            know.ReverseWords("a good   example");
+
         }
     }
 
@@ -60,6 +66,7 @@ namespace String
     }
     class Knowleage
     {
+
         #region 正则表达式
         public int CountValidWords(string sentence)
         {
@@ -207,6 +214,58 @@ namespace String
             return numFlag;
         }
 
+        // 验证回文串
+        public bool IsPalindrome(string s)
+        {
+            var str = new StringBuilder();
+            var arr = s.ToArray();
+            for (int i = 0; i < arr.Length; i++)
+            {
+                if (char.IsLetter(arr[i]) || char.IsDigit(arr[i])) str.Append(char.ToLower(arr[i]));
+            }
+            for (int left = 0, right = str.Length - 1; left < right; left++, right--)
+            {
+                if (str[left] != str[right]) return false;
+            }
+            return true;
+        }
+
+        // 反转字符串
+        public void ReverseString(char[] s)
+        {
+            for (int left = 0, right = s.Length - 1; left < right; left++, right--)
+            {
+                var item = s[left];
+                s[left] = s[right];
+                s[right] = item;
+            }
+        }
+
+        // 反转字符串中的单词
+        public string ReverseWords(string s)
+        {
+            var wordArr = s.Trim().Split(' ');
+            var res = new StringBuilder();
+            for (int i = 0, j = wordArr.Length - 1; i < j; i++, j--)
+            {
+                // 收缩边界
+                while (i < j && wordArr[i] == "") i++;
+                while (j > i && wordArr[j] == "") j--;
+                if (i >= j) break;
+                var item = wordArr[i];
+                wordArr[i] = wordArr[j];
+                wordArr[j] = item;
+            }
+            for (int i = 0; i < wordArr.Length; i++)
+            {
+                if (wordArr[i] != "")
+                {
+                    res.Append(wordArr[i]);
+                    res.Append(" ");
+                }
+            }
+            return res.ToString().TrimEnd();
+        }
     }
 
 }

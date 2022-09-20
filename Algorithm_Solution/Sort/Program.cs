@@ -183,11 +183,12 @@ namespace Sort
 
     class BubbleSort
     {
+        // 冒泡排序
         public static void bubbleSort(int[] para)
         {
             for (int i = 0; i < para.Length; i++)
             {
-                for (int j = para.Length - 1; j >= i; j--)
+                for (int j = para.Length - 2; j >= i; j--)
                 {
                     if (para[j] > para[j + 1])
                     {
@@ -196,6 +197,12 @@ namespace Sort
                 }
             }
         }
+
+        // 煎饼排序
+        //public IList<int> PancakeSort(int[] arr)
+        //{
+        //    // 每一轮都将最大值放到
+        //}
     }
 
     class MergeSort
@@ -324,6 +331,57 @@ namespace Sort
                 return new int[] { less + 1, more };
             }
         }
+
+
+        // 基于随机快速排序
+        public static int[] GetLeastNumbers(int[] arr, int k)
+        {
+            // 快速排序
+            quickSort(0, arr.Length - 1);
+            int[] res = new int[k];
+            for (int i = 0; i < k; i++)
+            {
+                res[i] = arr[i];
+            }
+            return res;
+
+            void quickSort(int left, int right)
+            {
+                if (left >= right)
+                {
+                    return;
+                }
+                int l = left;
+                int r = right;
+                while (l < r)
+                {
+                    // 因为是选取左边第一个数作为基数，若是选取最后一个数作为基数，则先从左边开始找
+                    // 先从右边开始找第一个比基数小的数
+                    while (arr[r] >= arr[left] && l < r)
+                    {
+                        r--;
+                    }
+                    // 然后从左边找第一个比基数大的数
+                    while (arr[l] <= arr[left] && l < r)
+                    {
+                        l++;
+                    }
+                    swap(l, r);
+                }
+                // 交换中间数与基数的位置
+                // 基数左边都是小于基数的数；右边都是大于基数的数
+                swap(left, l);
+                quickSort(left, l - 1);
+                quickSort(l + 1, right);
+            }
+
+            void swap(int a, int b)
+            {
+                int t = arr[a];
+                arr[a] = arr[b];
+                arr[b] = t;
+            }
+        }
     }
 
     class HeapSort
@@ -391,5 +449,60 @@ namespace Sort
             }
         }
 
+    }
+
+    public class PriorityQueue<T> where T : IComparable<T>
+    {
+        private SortedList<T, int> list = new SortedList<T, int>();
+        private int count = 0;
+
+        public void Add(T item)
+        {
+            if (list.ContainsKey(item)) list[item]++;
+            else list.Add(item, 1);
+
+            count++;
+        }
+
+        public T PopFirst()
+        {
+            if (Size() == 0) return default(T);
+            T result = list.Keys[0];
+            if (--list[result] == 0)
+                list.RemoveAt(0);
+
+            count--;
+            return result;
+        }
+
+        public T PopLast()
+        {
+            if (Size() == 0) return default(T);
+            int index = list.Count - 1;
+            T result = list.Keys[index];
+            if (--list[result] == 0)
+                list.RemoveAt(index);
+
+            count--;
+            return result;
+        }
+
+        public int Size()
+        {
+            return count;
+        }
+
+        public T PeekFirst()
+        {
+            if (Size() == 0) return default(T);
+            return list.Keys[0];
+        }
+
+        public T PeekLast()
+        {
+            if (Size() == 0) return default(T);
+            int index = list.Count - 1;
+            return list.Keys[index];
+        }
     }
 }
